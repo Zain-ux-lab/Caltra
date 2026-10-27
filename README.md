@@ -8,7 +8,7 @@ This repository runs locally. A hosted service and native mobile app are not ava
 
 ## What it does
 
-- **Photo + context:** upload a meal photo, optionally add a side view, and describe hidden ingredients by text or supported browser dictation.
+- **Photo + context:** choose your nearest meal or everything shown, upload a photo, optionally add a side view, and describe hidden ingredients by text or supported browser dictation. Shared extras whose eaten amount is unknown are listed for clarification.
 - **Editable food breakdown:** review each food, portion, source and macro estimate; answer follow-up questions and undo corrections.
 - **UK food lookup:** UK CoFID generic foods and UK-market Open Food Facts product records, with barcode lookup and manual label entry.
 - **Your usual products:** save specific products for compatible ingredients in homemade meals.

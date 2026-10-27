@@ -93,6 +93,12 @@ def product_matches(food,brand,pack=None):
 def preparation_matches(food,description):
     text=description.lower()
     name=food.get('name','').lower()
+    requested=set(tokens(description))
+    source_words=set(tokens(name))
+    # A shared ingredient name cannot justify a materially different complete dish.
+    if 'cheese' in requested:
+        major={'cauliflower','broccoli','macaroni','pasta','potato','chicken','beef','lamb','fish','rice','lentil','chickpea','spinach'}
+        if (source_words & major)-requested:return False
     cooked=r'\b(?:cooked|boiled|steamed|microwave|ready to eat)\b'
     # As-sold rice labels cannot be applied to cooked mass, even for a usual brand.
     if 'rice' in text and re.search(cooked,text) and not re.search(cooked,name):return False
@@ -169,6 +175,10 @@ def component_grams(component,food):
 
 def clarification(label):
     words=set(tokens(label))
+    if re.search(r'\b(?:b[oö]rek|pastry|pie|flatbread)\b',label,re.I) and not words&{'cheese','beef','chicken','meat','spinach','apple','lentil','potato'}:
+        return 'Was this plain bread or a filled pie/pastry, and what was the filling if you know?'
+    if 'cheese' in words and words&{'baked','grilled','dish'} and not words&{'feta','halloumi','cheddar','mozzarella','cottage','ricotta','cauliflower','broccoli','macaroni','pasta','pie','omelette'}:
+        return 'What type of cheese was this, and was it baked in oil or served in a sauce?'
     if words&{'fish','fillet','fillets'} and not words&{'salmon','cod','haddock','tuna','tilapia','trout','mackerel','sardine','seabass','halibut'}:
         return 'What type of fish is this — salmon, cod, or something else?'
     if 'rice' in words and not words&{'basmati','jasmine','arborio','sushi','wild'}:
