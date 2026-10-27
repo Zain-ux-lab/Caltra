@@ -1,0 +1,23 @@
+const {chromium,expect}=require('@playwright/test');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+ const page=await browser.newPage({viewport:{width:1440,height:1000}});
+ await page.goto('http://127.0.0.1:8000');
+ await page.getByRole('button',{name:'Log a meal',exact:true}).first().click();
+ await page.getByLabel('Upload meal photo').setInputFiles('/tmp/caltra-food-sample.jpg');
+ await expect(page.getByRole('button',{name:'beignets',exact:true})).toBeVisible({timeout:90000});
+ await page.getByRole('button',{name:'beignets',exact:true}).click();
+ await expect(page.getByRole('button',{name:/Beignet/}).first()).toBeVisible();
+ await page.getByRole('button',{name:/Beignet/}).first().click();
+ await page.getByRole('button',{name:'I don’t know the ingredients',exact:true}).click();
+ await expect(page.getByText('Guided response',{exact:true})).toBeVisible();
+ await page.evaluate(()=>scrollTo(0,0));
+ await page.screenshot({path:'test-results/photo-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ await page.evaluate(()=>scrollTo(0,0));
+ await expect.poll(()=>page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.screenshot({path:'test-results/photo-mobile.png',fullPage:true});
+ await page.getByRole('button',{name:'Settings',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'What’s connected'})).toBeVisible();
+ await browser.close();console.log('PASS: real photo → beignets suggestion → source record → serving → guided response; mobile editor and settings');
+})().catch(e=>{console.error(e);process.exit(1)});

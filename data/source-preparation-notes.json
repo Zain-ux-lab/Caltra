@@ -1,0 +1,20 @@
+{
+  "2706285": {
+    "includesAddedFat": true,
+    "sourceNotes": "USDA Fish, salmon, NFS points to Fish, salmon, baked or broiled (2706286). That recipe contains 4 g Oil or table fat, NFS, plus salt and salmon. Not a plain no-added-fat salmon reference.",
+    "preparationSourceUrl": "https://api.nal.usda.gov/fdc/v1/food/2706286",
+    "sourceWarning": "This USDA recipe includes added cooking fat; use it only when that preparation matches your meal."
+  },
+  "2706286": {
+    "includesAddedFat": true,
+    "sourceNotes": "USDA recipe inputFoods include 4 g Oil or table fat, NFS, 0.4 g salt, 72 g farmed Atlantic salmon and 24 g pink salmon. These are recipe input amounts, not a measurement of the user's fish.",
+    "preparationSourceUrl": "https://api.nal.usda.gov/fdc/v1/food/2706286",
+    "sourceWarning": "This USDA recipe includes added cooking fat; use it only when that preparation matches your meal."
+  },
+  "2706287": {
+    "includesAddedFat": true,
+    "sourceNotes": "USDA grilled salmon recipe inputFoods include2 g Oil or table fat, NFS, 0.4 g salt,74 g farmed Atlantic salmon and24 g pink salmon. Not a plain no-added-fat reference.",
+    "preparationSourceUrl": "https://api.nal.usda.gov/fdc/v1/food/2706287",
+    "sourceWarning": "This USDA grilled-salmon recipe includes added cooking fat; confirm it matches your preparation."
+  }
+}

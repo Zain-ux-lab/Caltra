@@ -1,0 +1,38 @@
+const {chromium}=require('@playwright/test');
+const assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+ const page=await browser.newPage({viewport:{width:1231,height:800}});
+ const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+ await page.goto('http://127.0.0.1:8000');
+ await page.getByRole('button',{name:'Take a photo',exact:true}).waitFor();
+ assert.equal(await page.locator('.camera-button').count(),1);
+ assert.equal(await page.getByLabel('Search foods').count(),0);
+ await page.screenshot({path:'test-results/simple-home.png'});
+ const response=await (await fetch('http://127.0.0.1:8000/api/foods?q=cookie')).json();
+ const food=response.foods.find(f=>Object.values(f.nutrients).every(v=>v!==null));
+ await page.route('**/api/recognize',route=>route.fulfill({json:{foods:[{label:'Iced cookie',query:'cookie',estimatedGrams:240,visibleCount:2,matches:[food],matchType:'approximate'}],description:'An iced cookie',question:'Did you eat it all?',notice:'Estimate only'}}));
+ const upload={name:'cookie.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64')};
+ await page.getByLabel('Upload meal photo').setInputFiles(upload);
+ await page.getByRole('heading',{name:'Iced cookie',exact:true}).waitFor();
+ await page.getByLabel('Estimated macros').waitFor();
+ await page.getByText('Generic food estimate',{exact:true}).waitFor();
+ for(const nutrient of ['protein','carbs','fat']) assert.equal(await page.locator('.macro-strip>div').filter({hasText:new RegExp(nutrient,'i')}).count(),1);
+ assert.equal(await page.getByLabel('Portion in grams',{exact:true}).isVisible(),false);
+ await page.getByText('Logging 1 of 2 visible items',{exact:true}).waitFor();
+ await page.getByRole('button',{name:'Log all 2',exact:true}).click();
+ assert.equal(await page.getByLabel('Portion in grams',{exact:true}).inputValue(),'240');
+ await page.getByRole('button',{name:'Log one',exact:true}).click();
+ assert.equal(await page.getByLabel('Portion in grams',{exact:true}).inputValue(),'120');
+ await page.getByText('Adjust estimate',{exact:true}).click();
+ await page.getByLabel('Portion in grams',{exact:true}).fill('90');
+ assert.equal(await page.locator('.calories').first().innerText(),`${Math.round(food.nutrients.calories*.9)}kcal`);
+ // A second photo must replace the first draft, not leave stale calories.
+ await page.getByLabel('Upload meal photo').setInputFiles(upload);
+ await page.waitForFunction(()=>document.querySelector('input[aria-label="Portion in grams"]')?.value==='120');
+ assert.equal(await page.locator('.ingredient').count(),1);
+ await page.setViewportSize({width:390,height:844});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.deepEqual(errors,[]);
+ await browser.close();console.log('PASS: minimal home, photo macros, hidden corrections, portion recalculation, replacement photo, mobile width. No meals saved.');
+})().catch(e=>{console.error(e);process.exit(1)});

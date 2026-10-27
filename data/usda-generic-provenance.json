@@ -1,0 +1,20 @@
+[
+  {
+    "dataType": "Foundation",
+    "url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_foundation_food_json_2026-04-30.zip",
+    "archive_sha256": "186e988ec542e913f51ef62b86a47758e8cdd0d1dc3889e7b055581f3c09c77a",
+    "json_sha256": "27d1fe3fd89edfbe528ed915da5619320e1d004d4594603a1b19bdb1511590cc",
+    "release_records": 395,
+    "usable_complete_macros": 311,
+    "excluded_unusable_records": 84
+  },
+  {
+    "dataType": "SR Legacy",
+    "url": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_json_2018-04.zip",
+    "archive_sha256": "0fe8ae486a2c8eb42cb96413f058deb51863a46c8fb8eeb4b1fb45006dd338ef",
+    "json_sha256": "70d4235ae3a2bdf48a7b9eaa1286a83fa67b6f3270436c9ce8b008213f500129",
+    "release_records": 7793,
+    "usable_complete_macros": 7793,
+    "excluded_unusable_records": 0
+  }
+]

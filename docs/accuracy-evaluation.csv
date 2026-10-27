@@ -1,0 +1,1 @@
+meal_id,date,meal_context,dish_name,model,model_revision,reference_method,reference_kcal,reference_protein_g,reference_carbs_g,reference_fat_g,predicted_dish,selected_source_id,logged_grams,estimated_kcal,estimated_protein_g,estimated_carbs_g,estimated_fat_g,correction_count,seconds_to_log,notes

@@ -1,0 +1,15 @@
+# Paired-view portion experiment — fixed before evaluation, 21 October 2026
+
+User approved a second free local experiment to test individual-food localization and a second angled photo. This is research code; no production integration or private-photo uploads.
+
+Data: reuse the first experiment's 600 training and 120 validation dishes. Choose 160 new official-test dishes, excluding all test IDs inspected in the first experiment; use deterministic SHA256 ordering, seed 42. Missing side imagery will be reported and excluded identically for all comparisons, never according to prediction error. Keep official plate groups separated via official train/test split; validation uses separate capture days from training.
+
+Views: the original overhead RGB image plus exactly the first decoded frame from camera A. No depth, other cameras, frame selection by quality, or test-label-driven selection. Download a bounded initial 512 KiB of each video, with a 2 MiB maximum fallback only for decoding failures; retain extracted JPEGs rather than full videos.
+
+Localization: frozen google/owlvit-base-patch32 revision cbc355fb364588351c5d51c7f74465e8e7ec6f72; query with dataset food names. For each ingredient, take its highest scoring region in each view. Threshold 0.1 and minimum 3% width/height; otherwise use whole image and mark fallback. These are predicted boxes, not measured segmentation masks. Record coverage and sample overlays. Do not infer invisible ingredients were visually recognized.
+
+Features: frozen microsoft/resnet-18 at the first experiment's pinned revision. Four trained controls use the same regression-head family and correct ingredient identities: food-only, whole overhead image, whole overhead plus side image, and localized overhead plus side crops with normalized box geometry and fallback flags. The baseline is training-only per-food median grams. Include the frozen first experiment's checkpoint on the new test as an additional reference.
+
+Training: seed 42, train-only vocabulary/priors/normalization; ingredient embedding16, MLP64, dropout0.2, residual log1p mass around median. AdamW learning rate0.001, weight decay0.01, batch128, maximum200epochs, early stopping30. Loss is smooth L1 on gram residuals divided by50 (beta0.2), rather than the first experiment's log-mass loss. Select each checkpoint by validation ingredient MAE; include epoch0 median fallback. No hyperparameter tuning against test results. Changes from the old experiment mean any old/new improvement cannot be attributed solely to the additional view: matched controls are required.
+
+Evaluation: ingredient and meal-sum MAE, WAPE, signed bias, MAE for portions >=10g, unknown-food count, localization fallback rate. Paired MAE differences with exploratory bootstrap intervals clustered by capture day. Report all variants, even failures. Multiple comparisons and cafeteria capture setup limit interpretation. Test may be opened only after all four validation-selected checkpoints are saved. Do not deploy based on this pilot alone.

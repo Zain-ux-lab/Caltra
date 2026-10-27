@@ -1,0 +1,32 @@
+const {chromium}=require('@playwright/test');
+const assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});
+ const page=await browser.newPage({viewport:{width:1400,height:1000}});
+ const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+ await page.goto('http://127.0.0.1:8000');
+ await page.getByRole('button',{name:'Log a meal',exact:true}).first().click();
+ await page.getByText('Connect your free-tier Gemini key to start photo logging.').waitFor();
+ await page.getByRole('button',{name:'Connect in Settings'}).click();
+ await page.getByLabel('Gemini API key',{exact:true}).waitFor();
+ await page.screenshot({path:'test-results/vision-settings.png',fullPage:true});
+ const foods=await (await fetch('http://127.0.0.1:8000/api/foods?q=cookie')).json();
+ const food=foods.foods.find(f=>Object.values(f.nutrients).every(v=>v!==null));
+ // Simulates the provider contract, not a live model accuracy test.
+ await page.route('**/api/recognize',route=>route.fulfill({json:{foods:[{label:'Large iced cookie',query:'cookie',estimatedGrams:110,matches:[food],matchType:'matched'}],description:'One large iced cookie',question:'Where did you buy this cookie?',notice:'Visual weights are estimates; database records are generic.'}}));
+ await page.getByRole('button',{name:'Return to meal',exact:true}).click();
+ await page.getByLabel('Upload meal photo').setInputFiles({name:'cookie.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64')});
+ await page.getByRole('button',{name:/Large iced cookie/}).waitFor();
+ assert.equal(await page.getByLabel('Portion in grams',{exact:true}).inputValue(),'110');
+ await page.getByText('Where did you buy this cookie?',{exact:false}).waitFor();
+ assert.equal(await page.getByRole('button',{name:'Save meal',exact:true}).isEnabled(),true);
+ await page.getByRole('button',{name:/Large iced cookie/}).click();
+ await page.locator('.food-result').first().click();
+ assert.equal(await page.locator('.ingredient').count(),1);
+ assert.equal(await page.getByLabel('Portion in grams',{exact:true}).inputValue(),'110');
+ await page.setViewportSize({width:390,height:844});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.deepEqual(errors,[]);
+ await browser.close();
+ console.log('PASS: setup, simulated photo-to-draft, source portion, follow-up, mobile layout; no diary entries saved.');
+})().catch(e=>{console.error(e);process.exit(1)});
