@@ -8,8 +8,8 @@ This repository runs locally. A hosted service and native mobile app are not ava
 
 ## What it does
 
-- **Photo + context:** choose your nearest meal or everything shown, upload a photo, optionally add a side view, and describe hidden ingredients by text or supported browser dictation. Shared extras whose eaten amount is unknown are listed for clarification.
-- **Editable food breakdown:** review each food, portion, source and macro estimate; answer follow-up questions and undo corrections.
+- **Photo + context:** upload a photo and optionally describe hidden ingredients. Caltra inventories the pictured meal automatically, including possible shared foods with estimated amounts. A side photo and product-default controls are optional. Review, halve or remove foods afterward; different foods on the same plate remain separate entries when identified.
+- **Editable food breakdown:** review each food, portion, source and macro estimate; halve one food or the whole meal, answer optional follow-up questions and undo AI corrections.
 - **UK food lookup:** UK CoFID generic foods and UK-market Open Food Facts product records, with barcode lookup and manual label entry.
 - **Your usual products:** save specific products for compatible ingredients in homemade meals.
 - **Daily diary:** calories, protein, carbohydrate and fat remaining against your saved targets; foods grouped by breakfast, lunch, dinner and snacks for a selected date.

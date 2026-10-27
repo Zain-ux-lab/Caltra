@@ -46,7 +46,7 @@ def test_fallback_failure_does_not_hide_unmatched_food(tmp_path,monkeypatch):
 
 
 def test_ai_estimate_saves_and_server_rejects_client_macro_tampering(tmp_path,monkeypatch):
-    monkeypatch.setattr(vision,'recognize',lambda data:{'foods':[{'label':'Cookie','query':'cookie','visibleCount':1,'estimatedGrams':120}],'description':'Cookie','question':'','notice':''})
+    monkeypatch.setattr(vision,'recognize',lambda data,note='':{'foods':[{'label':'Cookie','query':'cookie','visibleCount':1,'estimatedGrams':120}],'description':'Cookie','question':'','notice':''})
     monkeypatch.setattr(vision,'select_sources',lambda entries:{i:None for i,_ in enumerate(entries)})
     monkeypatch.setattr(vision,'estimate_nutrients',estimate,raising=False)
     with TestClient(create_app(tmp_path/'test.sqlite')) as client:

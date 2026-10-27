@@ -15,6 +15,7 @@ class Item(BaseModel):
     portionEvidence:str=Field(default='',max_length=400)
     portionLabel: str = Field(default='',max_length=200)
     usingUsualProduct:bool=False
+    possibleShared:bool=False
 
 
 class Meal(BaseModel):

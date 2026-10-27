@@ -318,6 +318,23 @@ def portion_divisor(food):
     return count
 
 
+def include_shared_extras(result):
+    """Keep already detected extras in the reviewable estimate, not a second queue."""
+    foods=result['foods']
+    existing={f['label'].casefold().strip() for f in foods}
+    excluded={name.casefold().strip() for name in result.get('excludedFoods',[])}
+    pending=[];added=False
+    for label in result.get('unconfirmedExtras',[]):
+        key=label.casefold().strip()
+        if key in existing or key in excluded:continue
+        if len(foods)>=12:
+            pending.append(label);continue
+        foods.append({'label':label,'query':label,'estimatedGrams':None,'visibleCount':1,'portionScope':'allVisible','basis':'assumed','visualEvidence':None,'components':[],'possibleShared':True})
+        existing.add(key);added=True
+    result['unconfirmedExtras']=pending
+    if added:result['scopeSummary']='Detected table foods included; possible shared foods have assumed quantities. Reduce or remove anything you did not eat.'
+
+
 def resolve_observation(result,store,allow_ai=False,usual_products=()):
     items=[];groups=[];missing=[];component_missing=[]
     if sum(len(f.get('components',[])) or 1 for f in result['foods'])>40:raise vision.VisionError('Too many ingredients were returned. Try one plate at a time.')
@@ -408,6 +425,8 @@ def resolve_observation(result,store,allow_ai=False,usual_products=()):
             missing=[label for label in missing if label!=food['label']]
     for group in groups:
         observed=result['foods'][int(group['id'])]
+        for item in items:
+            if item['id'] in group['itemIds']:item['possibleShared']=bool(observed.get('possibleShared'))
         if observed.get('components'):continue
         for item in items:
             if item['id'] in group['itemIds']:

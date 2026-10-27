@@ -51,7 +51,8 @@ def test_scope_is_sent_to_provider_and_cache_separated(tmp_path,monkeypatch):
   for scope in ('myPlate','allVisible'):
    r=c.post('/api/recognize',data={'scope':scope},files={'file':('fixture.jpg',data.getvalue(),'image/jpeg')})
    assert r.status_code==200,r.text
-   assert 'Butter' in r.json()['unconfirmedExtras']
+   if scope=='myPlate':assert 'Butter' in r.json()['unconfirmedExtras']
+   else:assert 'Butter' in [f['label'] for f in r.json()['foods']]
   assert c.post('/api/recognize',data={'scope':'invalid'},files={'file':('fixture.jpg',data.getvalue(),'image/jpeg')}).status_code==422
  assert 'nearest' in calls[0]['contents'][0]['parts'][0]['text'].lower()
  assert 'all plates' in calls[1]['contents'][0]['parts'][0]['text'].lower()

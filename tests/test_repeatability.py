@@ -15,7 +15,7 @@ def photo():
 
 def test_repeated_photo_reuses_successful_result_across_restart(tmp_path,monkeypatch):
     calls=[]
-    def identify(data):
+    def identify(data,note=''):
         calls.append(1)
         return {'foods':[{'label':'Cheese omelette','query':'omelet','estimatedGrams':200+len(calls)*20,'visibleCount':1}],'description':'omelet','question':'','notice':'Estimate'}
     monkeypatch.setattr(vision,'recognize',identify)
@@ -34,7 +34,7 @@ def test_repeated_photo_reuses_successful_result_across_restart(tmp_path,monkeyp
 def test_failed_match_is_not_cached(tmp_path,monkeypatch):
     monkeypatch.setattr(vision,'estimate_nutrients',lambda entries:{})
     calls=[]
-    def identify(data):
+    def identify(data,note=''):
         calls.append(1)
         return {'foods':[{'label':'Cheese omelette','query':'omelet','estimatedGrams':220}],'description':'omelet','question':'','notice':'Estimate'}
     monkeypatch.setattr(vision,'recognize',identify)
@@ -55,7 +55,7 @@ def test_photo_note_reaches_model_and_changes_cache_key(tmp_path,monkeypatch):
         for note in ['basmati rice, no oil','basmati rice, no oil','salmon and rice']:
             response=client.post('/api/recognize',files={'file':('meal.png',photo(),'image/png')},data={'note':note})
             assert response.status_code==200
-            assert response.json()['description']==note
+            assert response.json()['description'].endswith(' User details: '+note)
         response=client.post('/api/recognize',files={'file':('meal.png',photo(),'image/png')},data={'note':'x'*2001})
         assert response.status_code==422
-    assert calls==['basmati rice, no oil','salmon and rice']
+    assert [note.split(' User details: ',1)[1] for note in calls]==['basmati rice, no oil','salmon and rice']

@@ -34,7 +34,7 @@ def create_app(db_path=None,*,uk_only=True):
     store.seed()
     app.state.store=store
     analysis_lock=threading.Lock()
-    analysis_version='uk-table-scope-v21'
+    analysis_version='uk-automatic-inventory-v22'
 
     @app.middleware('http')
     async def local_only(request:Request,call_next):
@@ -176,7 +176,7 @@ def create_app(db_path=None,*,uk_only=True):
         os.environ['GEMINI_API_KEY']=key
         return {'ok':True}
 
-    def analyze(data,note,angle=None,homemade=False):
+    def analyze(data,note,angle=None,homemade=False,include_shared=True):
         # Serialised locally so simultaneous identical uploads cannot start two model calls.
         with analysis_lock:
             usuals=store.usual_products() if usual_products.applies(homemade,note) else []
@@ -188,6 +188,7 @@ def create_app(db_path=None,*,uk_only=True):
             if cached:return cached
             model_note=note+usual_products.context(usuals) if usuals else note
             result=vision.recognize(data,model_note,angle) if angle else vision.recognize(data,model_note) if model_note else vision.recognize(data)
+            if include_shared:estimation.include_shared_extras(result)
             estimation.validate_photo_quantities(result,note)
             try:
                 for food in result['foods']:
@@ -203,9 +204,9 @@ def create_app(db_path=None,*,uk_only=True):
                 store.cache_analysis(cache_key(),result)
             return result
     @app.post('/api/recognize')
-    async def recognize(file:UploadFile=File(...),note:str=Form(default='',max_length=2000),angle:UploadFile|None=File(default=None),homemade:bool=Form(default=False),scope:Literal['myPlate','allVisible']|None=Form(default=None)):
+    async def recognize(file:UploadFile=File(...),note:str=Form(default='',max_length=2000),angle:UploadFile|None=File(default=None),homemade:bool=Form(default=False),scope:Literal['automatic','myPlate','allVisible']=Form(default='automatic')):
         if scope:
-            instruction={'myPlate':'Logging scope requested: the nearest main plate and its associated personal side dishes and drink only. Other diners are excluded. Shared bread, butter, jam and honey require clarification of the amount eaten, not the whole table supply. The user note can specify a different plate.', 'allVisible':'Logging scope requested: all plates and visible food/drinks in the photo. Sum quantities across all plates, clearly state what is included, and do not present one-person quantities as a whole-table total.'}[scope]
+            instruction={'automatic':'Automatically inventory the meal across all plates and visible food/drinks. Include possible shared foods with estimated whole visible quantities, mark them shared, and let the user reduce/remove afterward. An explicit user note limiting the meal overrides this default. Bakery trays of identical independent items still default to one unless requested otherwise.', 'myPlate':'Logging scope requested: the nearest main plate and its associated personal side dishes and drink only. Other diners are excluded. Shared bread, butter, jam and honey require clarification of the amount eaten, not the whole table supply. The user note can specify a different plate.', 'allVisible':'Logging scope requested: all plates and visible food/drinks in the photo. Sum quantities across all plates, clearly state what is included, and do not present one-person quantities as a whole-table total.'}[scope]
             note=instruction+' User details: '+note
         data=await file.read(10*1024*1024+1)
         await file.close()
@@ -213,7 +214,7 @@ def create_app(db_path=None,*,uk_only=True):
         if angle:await angle.close()
         if angle and not side:raise HTTPException(400,'Side photo is empty. Choose a valid image.')
         try:
-            result=await run_in_threadpool(analyze,data,note.strip(),side,homemade)
+            result=await run_in_threadpool(analyze,data,note.strip(),side,homemade,scope!='myPlate')
             from .search import dish_tokens
             words=set(dish_tokens(' '.join(food['label'] for food in result['foods'])))
             favorites=store.favorites()

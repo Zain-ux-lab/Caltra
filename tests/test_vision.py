@@ -85,7 +85,7 @@ def test_settings_saves_private_key_without_returning_it(monkeypatch,tmp_path):
 
 def test_descriptive_cookie_gets_generic_macros_without_animal_cookie(tmp_path,monkeypatch):
     monkeypatch.setattr(vision,'select_sources',lambda entries:{index:next(f for f in entry['candidates'] if f['name']=='Cookie, NFS') for index,entry in enumerate(entries)})
-    monkeypatch.setattr(vision,'recognize',lambda data:{'foods':[{'label':'Iced cookie with toppings','query':'iced cookie with toppings','estimatedGrams':120}],'description':'cookie','question':'','notice':'Estimate'})
+    monkeypatch.setattr(vision,'recognize',lambda data,note='':{'foods':[{'label':'Iced cookie with toppings','query':'iced cookie with toppings','estimatedGrams':120}],'description':'cookie','question':'','notice':'Estimate'})
     with TestClient(create_app(tmp_path/'test.sqlite')) as client:
         result=client.post('/api/recognize',files={'file':('cookie.jpg',photo(),'image/jpeg')}).json()['foods'][0]
         assert result['matchType']=='approximate'

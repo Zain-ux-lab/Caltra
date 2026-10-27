@@ -1,6 +1,6 @@
 export type Nutrients={calories:number|null;protein:number|null;carbs:number|null;fat:number|null;[key:string]:number|null|undefined};
 export type Food={personalReference?:boolean;nutritionBasis?:'g'|'ml';retailer?:string;isAiEstimate?:boolean;brand?:string;barcode?:string;packGrams?:number;sourceWarning?:string;id:string;name:string;source:string;dataType:string;url:string;retrievedAt:string;nutrients:Nutrients;portions:{label:string;grams:number;unit?:string}[]};
-export type Item={quantityBasis?:'photo'|'user'|'assumed';portionEvidence?:string;usingUsualProduct?:boolean;label?:string;clarification?:string;id:string;food:Food;grams:number;quantityKind:'estimated'|'measured';portionLabel:string};
+export type Item={possibleShared?:boolean;quantityBasis?:'photo'|'user'|'assumed';portionEvidence?:string;usingUsualProduct?:boolean;label?:string;clarification?:string;id:string;food:Food;grams:number;quantityKind:'estimated'|'measured';portionLabel:string};
 export type Meal={mealType?:'breakfast'|'lunch'|'dinner'|'snacks'|'unassigned';homemade?:boolean;id:string;name:string;date:string;items:Item[];notes:string;totals:Record<string,number>};
 export type Status={visionConfigured:boolean;visionModel:string;usdaConfigured:boolean;chatConfigured:boolean;cachedFoods:number};
 export async function api<T>(url:string,options?:RequestInit):Promise<T>{

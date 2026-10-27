@@ -1,0 +1,21 @@
+const {chromium}=require('@playwright/test');const assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});try{
+ const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];page.on('pageerror',e=>errors.push(String(e)));
+ const item=(id,label,grams,calories,shared=false)=>({id,label,grams,quantityKind:'estimated',possibleShared:shared,food:{id,name:label,source:'Test fixture',nutrients:{calories,protein:10,carbs:20,fat:10},portions:[]}});
+ const items=[item('pie','Triangular cheese pie',100,300),item('strip','Long pastry strip',60,250),item('bread','White bread in basket',100,220,true),item('cola','Cola can',330,42,true)];
+ let saved;
+ await page.route('**/api/recognize',r=>{assert.ok(r.request().postDataBuffer().includes(Buffer.from('name="scope"\r\n\r\nautomatic')));return r.fulfill({json:{foods:[],items,groups:[],missing:[],usuals:[],description:'Two distinct pastries and shared extras',notice:'',question:'',scopeSummary:'Visible meal and shared extras estimated',unconfirmedExtras:[]}})});
+ await page.route('**/api/meals',r=>{if(r.request().method()==='POST'){saved=r.request().postDataJSON();return r.fulfill({json:{...saved,totals:{calories:369,protein:1,carbs:1,fat:1}}})}return r.fulfill({json:[]})});
+ await page.goto('http://127.0.0.1:8000');await page.getByRole('button',{name:'Log food',exact:true}).click();
+ await page.getByLabel('Upload meal photo',{exact:true}).setInputFiles({name:'fixture.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=','base64')});
+ assert.equal(await page.getByLabel('Photo logging scope').count(),0);assert.equal(await page.getByLabel('Anything to add?',{exact:false}).isVisible(),true);
+ await page.getByRole('button',{name:'Estimate macros',exact:true}).click();await page.getByLabel('Estimated macros').waitFor();
+ assert.equal(await page.locator('.ingredient').count(),4);assert.equal(await page.locator('.shared-badge').count(),2);
+ const bread=page.locator('.ingredient').filter({has:page.getByText('White bread in basket',{exact:true})});await bread.getByRole('button',{name:'Ate half',exact:true}).click();
+ assert.equal(await bread.getByRole('spinbutton').inputValue(),'50');
+ await page.getByRole('button',{name:'Ate half the meal',exact:true}).click();
+ assert.equal(await bread.getByRole('spinbutton').inputValue(),'25');
+ const pie=page.locator('.ingredient').filter({has:page.getByText('Triangular cheese pie',{exact:true})});assert.equal(await pie.getByLabel('Portion in grams',{exact:true}).inputValue(),'50');
+ await page.getByRole('button',{name:'Save meal',exact:true}).click();await page.getByRole('heading',{name:'Your daily diary'}).waitFor();assert.equal(saved.items.length,4);assert.equal(saved.items.find(i=>i.id==='bread').possibleShared,true);
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);console.log('PASS: no scope step; bread/cola included and labelled; pastries separate; per-food and whole-meal halving recalculate; save retains flags. All writes mocked.');
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

@@ -48,7 +48,7 @@ def test_boiled_egg_candidate_is_egg_not_egg_noodles(tmp_path):
 def test_recognize_route_does_not_clear_meal_on_match_failure(tmp_path,monkeypatch):
  from fastapi.testclient import TestClient
  from backend.main import create_app
- monkeypatch.setattr(vision,'recognize',lambda data:{'foods':[{'label':'Hard boiled egg','query':'egg boiled','estimatedGrams':50,'visibleCount':1}],'description':'Egg','question':'','notice':''})
+ monkeypatch.setattr(vision,'recognize',lambda data,note='':{'foods':[{'label':'Hard boiled egg','query':'egg boiled','estimatedGrams':50,'visibleCount':1}],'description':'Egg','question':'','notice':''})
  monkeypatch.setattr(vision,'select_sources',fail)
  monkeypatch.setattr(vision,'estimate_nutrients',guesses)
  with TestClient(create_app(tmp_path/'api.sqlite')) as c:
