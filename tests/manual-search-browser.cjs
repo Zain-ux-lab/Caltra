@@ -1,0 +1,22 @@
+const {chromium}=require('@playwright/test');const assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});try{
+ const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];page.on('pageerror',e=>errors.push(String(e)));
+ let saved;const foods=[{id:'wrap',name:'UK protein wrap',source:'Your product label',nutritionBasis:'g',nutrients:{calories:300,protein:18,carbs:35,fat:10},portions:[{label:'1 pack',grams:360,unit:'g'},{label:'1 wrap',grams:60,unit:'g'}]},{id:'milk',name:'UK semi-skimmed milk',source:'Your product label',nutritionBasis:'ml',nutrients:{calories:50,protein:4,carbs:5,fat:2},portions:[]}];
+ await page.route('**/api/foods?*',r=>r.fulfill({json:{foods,warning:''}}));
+ await page.route('**/api/meals',r=>{if(r.request().method()==='POST'){saved=r.request().postDataJSON();return r.fulfill({json:{...saved,totals:{calories:485,protein:1,carbs:1,fat:1}}})}return r.fulfill({json:[]})});
+ await page.route('**/api/recognize',()=>{throw Error('Manual logging must not call photo recognition')});
+ await page.goto('http://127.0.0.1:8000');await page.getByRole('button',{name:'Log food',exact:true}).click();
+ await page.getByRole('button',{name:'Search foods',exact:true}).click();
+ assert.equal(await page.getByText('What are you logging?',{exact:true}).count(),0);
+ await page.getByLabel('Search UK foods',{exact:true}).fill('wrap');await page.getByRole('button',{name:'Search',exact:true}).click();
+ await page.getByRole('button',{name:/UK protein wrap/}).click();
+ await page.getByLabel('Serving unit',{exact:true}).selectOption('1');await page.getByLabel('Food amount',{exact:true}).fill('2');
+ await page.getByRole('button',{name:'Add to meal',exact:true}).click();
+ assert.equal(await page.locator('.ingredient').count(),1);assert.equal(await page.locator('.ingredient').getByRole('spinbutton').inputValue(),'120');
+ await page.getByLabel('Search UK foods',{exact:true}).fill('milk');await page.getByRole('button',{name:'Search',exact:true}).click();await page.getByRole('button',{name:/UK semi-skimmed milk/}).click();
+ await page.getByLabel('Food amount',{exact:true}).fill('250');await page.getByRole('button',{name:'Add to meal',exact:true}).click();
+ assert.equal(await page.locator('.ingredient').count(),2);assert.equal(await page.getByLabel('Portion in millilitres 2',{exact:true}).inputValue(),'250');
+ await page.getByRole('button',{name:'Save meal',exact:true}).click();await page.getByRole('heading',{name:'Your daily diary'}).waitFor();
+ assert.equal(saved.items[0].grams,120);assert.equal(saved.items[1].grams,250);assert.equal(saved.items[1].food.nutritionBasis,'ml');assert.equal(saved.items[0].quantityBasis,'user');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);console.log('PASS: search without a photo, select labelled wrap serving, enter milk in ml, preview/add multiple foods, save to diary without AI. Writes mocked.');
+}finally{await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

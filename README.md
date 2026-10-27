@@ -9,6 +9,7 @@ This repository runs locally. A hosted service and native mobile app are not ava
 ## What it does
 
 - **Photo + context:** upload a photo and optionally describe hidden ingredients. Caltra inventories the pictured meal automatically, including possible shared foods with estimated amounts. A side photo and product-default controls are optional. Review, halve or remove foods afterward; different foods on the same plate remain separate entries when identified.
+- **Manual food logging:** search UK foods or products without a photo, select a supplied serving or enter grams/ml, preview macros and add multiple foods to a meal.
 - **Editable food breakdown:** review each food, portion, source and macro estimate; halve one food or the whole meal, answer optional follow-up questions and undo AI corrections.
 - **UK food lookup:** UK CoFID generic foods and UK-market Open Food Facts product records, with barcode lookup and manual label entry.
 - **Your usual products:** save specific products for compatible ingredients in homemade meals.
@@ -40,7 +41,7 @@ Open [localhost:8000](http://127.0.0.1:8000). On macOS, `start.command` can laun
 1. Open **Targets** and calculate or enter your daily targets.
 2. To enable photo analysis, connect your own Gemini key in **Settings**. Alternatively copy `.env.example` to `.env` and set the key there.
 3. Add your usual UK products in **Settings → My usual products**.
-4. Choose **Log food**, select a meal/date, add a photo and a short description, then review the estimate before saving.
+4. Choose **Log food**, select a meal/date, then either take a photo or choose **Search foods**. Review portions and save the meal to your diary.
 
 Basic diary, source search and nutrient arithmetic can work without Gemini. Photo recognition and AI help require an accessible configured model. The sample model name reflects the development configuration; replace it if your Google project does not support it. Google API quotas and pricing apply separately. Caltra does not enable billing for you.
 
@@ -73,6 +74,7 @@ pnpm build
 With the app running, the current browser flows can be checked with:
 
 ```sh
+node tests/manual-search-browser.cjs
 node tests/daily-diary-browser.cjs
 node tests/plated-pieces-browser.cjs
 ```
