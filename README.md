@@ -6,6 +6,23 @@ Caltra is an early-stage nutrition tracker: photograph a meal, add what the came
 
 This repository runs locally. A hosted service and native mobile app are not available yet.
 
+## Why I built it and what I contributed
+
+I wanted a food diary that lets me correct what a photo cannot reliably tell:
+the food identity, portion, hidden ingredients and product used. I shaped the
+photo-review workflow around that problem and worked on the Python API,
+source matching, quantity correction, diary and reliability checks, with
+AI-assisted development and tests. The UI is built with React and TypeScript;
+this is project experience, not a claim that I wrote every line unaided.
+
+The key decision is to keep food identification separate from nutrient
+arithmetic: the app matches a reviewed food to a source record, then calculates
+nutrients from the reviewed amount. Missing nutrient data stays unknown.
+See [estimation](backend/estimation.py), [photo analysis](backend/vision.py)
+and the [tests](tests/) for the implementation. Portion accuracy remains an
+open problem, so this is a working local prototype rather than a validated
+nutrition tool.
+
 ## What it does
 
 - **Photo + context:** upload a photo and optionally describe hidden ingredients. Caltra inventories the pictured meal automatically, including possible shared foods with estimated amounts. A side photo and product-default controls are optional. Review, halve or remove foods afterward; different foods on the same plate remain separate entries when identified.
