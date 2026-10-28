@@ -208,6 +208,29 @@ def item_for(food,grams,label,identified=''):
     return item
 
 
+def changed_ai_identity(food,component):
+    if not food or not food.get('isAiEstimate'):return False
+    ignored={'a','an','the','with','in','of','and','dish','casserole','pieces','homemade'}
+    old=set(tokens(food['name']))-ignored
+    new=set(tokens(component['label']+' '+component['query']))-ignored
+    return bool(new-old)
+
+
+def plain_uk_reference(component,records):
+    # Exact aliases only: never turn a composite or branded dish into an ingredient.
+    if component.get('brand'):return None
+    aliases={
+        'walnuts':'Walnuts, kernel only','walnut':'Walnuts, kernel only',
+        'almonds':'Almonds, whole kernels','almond':'Almonds, whole kernels',
+        'rolled oats':'Porridge oats, unfortified','porridge oats':'Porridge oats, unfortified',
+        'cocoa powder':'Cocoa powder','cacao powder':'Cocoa powder',
+        'banana':'Bananas, flesh only','bananas':'Bananas, flesh only',
+    }
+    name=aliases.get(' '.join(component['label'].lower().split()))
+    if not name or aliases.get(' '.join(component['query'].lower().split()))!=name:return None
+    return next((f for f in records if f.get('source')=='UK CoFID 2021' and f['name']==name),None)
+
+
 def resolve_components(components,store,known_ids=(),allow_ai=False,usual_products=(),group_count=1):
     records=store.foods()
     entries=[]
@@ -219,6 +242,9 @@ def resolve_components(components,store,known_ids=(),allow_ai=False,usual_produc
         usual=find_usual(component,usual_products)
         ident=component.get('sourceId')
         reference=personal_reference(component,records)
+        if ident and ident in known_ids and changed_ai_identity(store.food(ident),component):
+            # New preparation must not inherit the old AI density. Keep its amount.
+            continue
         if ident and ident in known_ids and store.food(ident) and preparation_matches(store.food(ident),component['label']+' '+component['query']) and (not component.get('brand') or product_matches(store.food(ident),component['brand'],component.get('packGrams'))):selected[index]=store.food(ident)
         elif usual and preparation_matches(usual,component['label']+' '+component['query']):selected[index]=usual
         elif reference:
@@ -240,7 +266,7 @@ def resolve_components(components,store,known_ids=(),allow_ai=False,usual_produc
             selected[entries[index][0]]=allowed.get(food['id']) if food else None
     for index,component in enumerate(components):
         if not selected.get(index):
-            generic=generic_berry(component,records)
+            generic=plain_uk_reference(component,records) or generic_berry(component,records)
             if generic:selected[index]=generic
     if allow_ai:
         unresolved=[i for i in range(len(components)) if not selected.get(i)]

@@ -1,3 +1,4 @@
+from datetime import date
 import json
 import hashlib
 import threading
@@ -34,7 +35,7 @@ def create_app(db_path=None,*,uk_only=True):
     store.seed()
     app.state.store=store
     analysis_lock=threading.Lock()
-    analysis_version='uk-automatic-inventory-v22'
+    analysis_version='uk-reliability-review-v23'
 
     @app.middleware('http')
     async def local_only(request:Request,call_next):
@@ -71,6 +72,26 @@ def create_app(db_path=None,*,uk_only=True):
     def suggest_targets(body:targets.Profile):
         try:return targets.suggest(body)
         except ValueError as e:raise HTTPException(422,str(e))
+
+    class DayCompletion(BaseModel):
+        complete:bool
+
+    @app.get('/api/days/{day}')
+    def day_status(day:date):
+        return {'date':day.isoformat(),'complete':bool((store.setting('day:'+day.isoformat()) or {}).get('complete'))}
+
+    @app.post('/api/days/{day}/complete')
+    def complete_day(day:date,body:DayCompletion):
+        store.save_setting('day:'+day.isoformat(),{'complete':body.complete})
+        return day_status(day)
+
+    @app.get('/api/diet-review')
+    def diet_review(end:date,period:int=Query(default=7,ge=3,le=7)):
+        if period not in (3,7):raise HTTPException(422,'Choose 3 or 7 days.')
+        from .diet_review import review
+        from datetime import timedelta
+        complete={d.isoformat() for n in range(period) if (store.setting('day:'+(d:=end-timedelta(days=n)).isoformat()) or {}).get('complete')}
+        return review(store.meals(),end,period,complete)
 
     @app.get('/api/nutrients')
     def nutrient_definitions():return [{'key':k,'label':label,'unit':unit,'group':group} for k,label,unit,group in NUTRIENTS]

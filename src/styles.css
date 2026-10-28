@@ -33,3 +33,15 @@ body{background:var(--paper)}a{color:#88432f}button,input,select,textarea{font:i
 .scope-summary{font-size:12px;color:var(--muted);text-align:left;border-left:3px solid var(--accent);padding:8px 12px;background:var(--soft);border-radius:0 8px 8px 0}.scope-summary span{display:block;margin-top:6px;color:var(--ink)}
 .shared-badge{display:inline-block;margin:8px 0 0;padding:5px 8px;border-radius:8px;background:var(--soft);color:#88432f;font-size:11px}.meal-fractions{display:flex;align-items:center;justify-content:center;gap:12px;margin:20px 0}.meal-fractions small{color:var(--muted);font-size:11px}.photo-options{margin-bottom:20px}.photo-options summary{font-size:12px;margin-bottom:14px}
 .manual-entry{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px;padding:18px}.manual-food-search{border:1px solid var(--line);background:var(--surface);padding:22px;border-radius:18px;margin:20px 0}.manual-food-search .section-heading{margin:0 0 12px}.manual-results{max-height:420px;overflow:auto;margin-top:14px}.manual-results .food-result{padding:15px 3px;border-color:var(--line)}.manual-results .food-result b{font-size:14px;font-weight:500}.manual-results .food-result small{color:var(--muted)}.manual-selection{margin-top:16px}.manual-selection h3{font-size:18px;line-height:1.4;margin:10px 0}.manual-selection .text-button{margin:0 0 12px}.manual-selection label{font-size:12px}.manual-selection input,.manual-selection select{height:46px;font-size:14px}.selected-amount{color:var(--muted);font-size:12px}.manual-selection .food-macros{margin:10px 0 22px}@media(max-width:600px){.manual-food-search{padding:16px}}
+
+.diet-review {padding:clamp(16px,3vw,28px);margin:24px 0;background:var(--surface)}
+.diet-review .section-heading {margin-top:0;gap:12px;flex-wrap:wrap}
+.diet-review select {padding:8px;border:1px solid var(--line);border-radius:10px;margin-left:8px;color:inherit;background:transparent}
+.diet-review details {padding:14px 0;border-top:1px solid var(--line)}
+.diet-review summary {cursor:pointer;color:var(--accent)}
+.review-day {display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 0}
+.review-day input {width:18px;height:18px;accent-color:var(--accent)}
+.review-day span {font-size:.85rem;color:var(--muted)}
+.review-finding {padding:16px 0;border-top:1px solid var(--line)}
+.review-nutrient {display:grid;grid-template-columns:1fr auto;gap:8px;padding:14px 0;border-bottom:1px solid var(--line)}
+.review-nutrient small {grid-column:1/-1;color:var(--muted)}

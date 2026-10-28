@@ -102,3 +102,11 @@ Portion-estimation research code is retained under `experiments/`; its downloade
 - **Mifflin–St Jeor**, [original equation paper](https://pubmed.ncbi.nlm.nih.gov/2305711/): starting estimate of resting energy for the target calculator. Activity and macro-split defaults remain editable estimates.
 
 Third-party data and dependencies retain their own terms. No blanket open-source licence has been selected for Caltra's application code yet.
+
+## Dietary patterns and data coverage
+
+The Nutrients tab includes 3-day and 7-day reviews ending on the selected diary date. Optionally mark days as finished logging. A recurring low-intake flag needs at least three complete days with full data coverage for that nutrient; missing dates and missing nutrient values never count as zero. Initial food suggestions use general adult NHS references for fibre, calcium and vitamin C. Other nutrients show recorded averages where available, without personalised deficiency claims. This is an in-app review, not a background notification service or clinical assessment.
+
+Foods with macro-only AI estimates remain unknown for vitamins and minerals. Exact plain UK ingredient aliases can use CoFID references when source selection finds no match; product labels and composite recipes are not silently replaced with generic ingredients. Historical meal snapshots are preserved.
+
+Photo analysis makes no automatic retry. Incomplete provider replies, timeouts and service failures have separate messages; descriptive metadata is bounded without relaxing nutrition or quantity validation. Corrections that change an AI-estimated food's identity or preparation no longer reuse its old calorie density. Portion accuracy remains limited by image evidence.
