@@ -1,5 +1,6 @@
 import json
 import sqlite3
+import os
 from pathlib import Path
 from .nutrition import calculate, normalize_food
 
@@ -21,7 +22,8 @@ class Store:
         # The application always creates a UK-only store by default.
         self.uk_only=uk_only
         self.path = str(path)
-        Path(path).parent.mkdir(parents=True,exist_ok=True)
+        self.database_url=os.getenv('CALTRA_DATABASE_URL','').strip()
+        if not self.database_url:Path(path).parent.mkdir(parents=True,exist_ok=True)
         with self.connect() as db:
             db.execute('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, data TEXT NOT NULL)')
             db.execute('CREATE TABLE IF NOT EXISTS foods (id TEXT PRIMARY KEY, data TEXT NOT NULL)')
@@ -32,6 +34,9 @@ class Store:
             db.execute('CREATE TABLE IF NOT EXISTS usual_products (category TEXT PRIMARY KEY, data TEXT NOT NULL)')
 
     def connect(self):
+        if self.database_url:
+            from .database import PostgresConnection
+            return PostgresConnection(self.database_url)
         return sqlite3.connect(self.path, timeout=10)
 
     def analysis(self, ident):

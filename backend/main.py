@@ -31,21 +31,20 @@ ALIASES={'daal':'dal','roti':'chapati','gobi':'cauliflower','chana':'chickpeas',
 
 def create_app(db_path=None,*,uk_only=True):
     app=FastAPI(title='Caltra',docs_url=None,redoc_url=None)
-    store=Store(db_path or ROOT/'data'/'caltra.sqlite',uk_only=uk_only)
+    store=Store(db_path or os.getenv('CALTRA_DB_PATH') or ROOT/'data'/'caltra.sqlite',uk_only=uk_only)
     store.seed()
     app.state.store=store
+    @app.get('/healthz')
+    def health():return {'status':'ok'}
+
     analysis_lock=threading.Lock()
     analysis_version='uk-reliability-review-v23'
 
     @app.middleware('http')
     async def local_only(request:Request,call_next):
-        host=request.url.hostname
-        if host not in {'127.0.0.1','localhost','testserver'}:
-            return JSONResponse({'detail':'This prototype is local only.'},status_code=403)
-        origin=request.headers.get('origin')
-        if request.method not in {'GET','HEAD','OPTIONS'} and origin:
-            allowed={f'http://{host}:8000',f'http://{host}:5173',f'http://{host}:8765'}
-            if origin not in allowed:return JSONResponse({'detail':'Foreign origin rejected.'},status_code=403)
+        from .access import check_access
+        denied=check_access(request)
+        if denied is not None:return denied
         response=await call_next(request)
         response.headers['X-Content-Type-Options']='nosniff'
         response.headers['Referrer-Policy']='no-referrer'

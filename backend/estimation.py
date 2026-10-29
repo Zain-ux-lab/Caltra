@@ -187,6 +187,8 @@ def clarification(label):
 
 
 def set_portion_evidence(item,observation):
+    if observation.get('identityUncertain'):
+        item['clarification']=(observation.get('confirmationQuestion') or f"Is this {item.get('label','food')}, or something else?")[:300]
     basis=observation.get('basis','assumed')
     evidence=(observation.get('visualEvidence') or '').strip()
     if basis=='photo' and (not evidence or not observation.get('estimatedGrams')):basis='assumed'
