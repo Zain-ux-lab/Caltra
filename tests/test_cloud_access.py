@@ -24,3 +24,11 @@ def test_local_stays_local(monkeypatch):
     monkeypatch.delenv('CALTRA_PUBLIC_ORIGIN',raising=False)
     assert check_access(request()).status_code==403
     assert check_access(request(host='localhost')) is None
+
+def test_install_assets_public_but_private_routes_protected(monkeypatch):
+    monkeypatch.setenv('CALTRA_PUBLIC_ORIGIN','https://caltra.example')
+    monkeypatch.setenv('CALTRA_ACCESS_PASSWORD','long-private-test-password')
+    for path in ['/manifest.webmanifest','/icon-192.png','/icon-512.png','/sw.js','/launch.html']:
+        assert check_access(request(path=path)) is None
+    for path in ['/','/api/meals','/api/settings','/api/status']:
+        assert check_access(request(path=path)).status_code==401

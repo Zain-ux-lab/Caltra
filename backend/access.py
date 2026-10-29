@@ -19,7 +19,8 @@ def check_access(request):
             return JSONResponse({'detail':'Private cloud access is not configured.'},503)
         if host!=parsed.hostname:return JSONResponse({'detail':'Invalid host.'},403)
         allowed={cloud}
-        if request.url.path=='/healthz' and request.method=='GET':return None
+        public_paths={'/healthz','/manifest.webmanifest','/icon-180.png','/icon-192.png','/icon-512.png','/sw.js','/offline.html','/launch.html'}
+        if request.url.path in public_paths and request.method in {'GET','HEAD'}:return None
         try:
             scheme,encoded=request.headers.get('authorization','').split(' ',1)
             credentials=base64.b64decode(encoded,validate=True).decode()
