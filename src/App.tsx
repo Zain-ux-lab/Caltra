@@ -82,7 +82,7 @@ export default function App(){
  const total=totals(items),valid=items.length>0&&items.every(i=>Number.isFinite(i.grams)&&i.grams>0&&i.grams<=100000)&&name.trim();
 
  return <div className={"app view-"+view}>
-  <header><button className="brand" onClick={()=>setView('today')}>caltra<span>.</span></button><nav><button aria-label="Food diary" onClick={()=>setView('today')}><BookOpen size={20}/></button><button aria-label="Settings" onClick={()=>setView('settings')}><Settings size={20}/></button></nav></header>
+  <header><button className="brand" onClick={()=>setView('today')}>caltra<span>!</span></button><nav><button aria-label="Food diary" onClick={()=>setView('today')}><BookOpen size={20}/></button><button aria-label="Settings" onClick={()=>setView('settings')}><Settings size={20}/></button></nav></header>
   <main>
    {(view==='today'||view==='nutrients')&&<DatePicker date={date} onChange={setDate}/>}
    {error&&<p className="error" role="alert">{error}<button aria-label="Dismiss error" onClick={()=>setError('')}><X size={16}/></button></p>}

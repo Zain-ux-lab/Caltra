@@ -1,5 +1,5 @@
 // Cache the offline notice only. Never persist API responses, photos or diaries.
-const CACHE = 'caltra-offline-v1';
+const CACHE = 'caltra-offline-v2';
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.add('/offline.html')));
 });
