@@ -11,10 +11,10 @@ from .search import search_foods, photo_candidates, tokens
 
 def source_picks(entries,allow_ai):
     from .diagnostics import record
-    record('source_candidates',entries=entries)
+    record('source_candidates',entries=[{'label':entry['label'],'candidates':[{'id':f['id'],'name':f['name'],'source':f.get('source')} for f in entry['candidates']]} for entry in entries])
     try:
         picks=vision.select_sources(entries)
-        record('source_selection',selected=picks)
+        record('source_selection',selected={index:food['id'] if food else None for index,food in picks.items()})
         return picks
     except vision.VisionError:
         record('source_selection_failed',reason='Provider could not select sources')
