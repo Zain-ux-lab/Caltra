@@ -15,9 +15,14 @@ jobs:
           python - <<'PY'
           import requests,re
           from bs4 import BeautifulSoup
-          r=requests.get('https://www.nandos.co.uk/food/menu/commons-be874f9a21e04dd51083.js',timeout=40)
-          r.raise_for_status()
-          for needle in ['Regular','Large','factsForPortionSizes']:
-              for m in list(re.finditer(re.escape(needle),r.text))[:10]:
-                  print('NANDOS_SIZES',r.text[max(0,m.start()-150):m.start()+200])
+          r=requests.get('https://www.nandos.co.uk/food/menu/',timeout=40)
+          soup=BeautifulSoup(r.text,'html.parser')
+          links=[x.get('href') for x in soup.find_all('link',href=True) if '.js' in x.get('href')]
+          print('CHUNKS',links)
+          for link in links:
+              if 'component' not in link:continue
+              text=requests.get('https://www.nandos.co.uk'+link,timeout=40).text
+              for needle in ['Regular','Large','factsForPortionSizes']:
+                  for m in list(re.finditer(re.escape(needle),text))[:10]:
+                      print('SIZE_CONTEXT',text[max(0,m.start()-200):m.start()+250])
           PY
