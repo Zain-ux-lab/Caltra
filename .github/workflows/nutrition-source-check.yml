@@ -23,6 +23,6 @@ jobs:
           print('TEXT',soup.get_text(' ',strip=True))
           import re
           js=requests.get('https://allergensandnutritions.popeyesuk.com'+soup.find('script',src=True)['src'],timeout=40).text
-          for m in re.finditer(r'.{0,180}(?:https:|nutritional|supabase|fetch\\().{0,220}',js):
+          for m in re.finditer(r'.{0,180}(?:https:|nutritional|supabase|fetch).{0,220}',js):
               print('JS',m.group())
           PY
