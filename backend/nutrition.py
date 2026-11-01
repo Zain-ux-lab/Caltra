@@ -6,11 +6,16 @@ KEYS = ('calories', 'protein', 'carbs', 'fat')
 from .nutrients import NUTRIENTS
 EXTRA_KEYS=tuple(n[0] for n in NUTRIENTS)
 
+def nutrition_divisor(food):
+    # The legacy grams field holds amounts in food.nutritionBasis.
+    return 1 if food.get('nutritionBasis') == 'serving' else 100
+
+
 def nutrient_coverage(items):
     result={}
     for key in EXTRA_KEYS:
         known=[i for i in items if isinstance(i['food']['nutrients'].get(key),(float,int)) and not isinstance(i['food']['nutrients'].get(key),bool) and math.isfinite(i['food']['nutrients'][key]) and i['food']['nutrients'][key]>=0]
-        result[key]={'value':round(sum(i['food']['nutrients'][key]*i['grams']/100 for i in known),8) if known else None,'complete':bool(items) and len(known)==len(items),'missing':len(items)-len(known)}
+        result[key]={'value':round(sum(i['food']['nutrients'][key]*i['grams']/nutrition_divisor(i['food']) for i in known),8) if known else None,'complete':bool(items) and len(known)==len(items),'missing':len(items)-len(known)}
     return result
 
 
@@ -61,7 +66,7 @@ def calculate(items):
             value=item['food']['nutrients'].get(key)
             if value is None or not isinstance(value,(int,float)) or not math.isfinite(value) or value < 0:
                 raise ValueError('This food is missing complete nutrition data. Choose another source record.')
-            totals[key] += value * grams / 100
+            totals[key] += value * grams / nutrition_divisor(item['food'])
     return {k:round(v,8) for k,v in totals.items()}
 
 

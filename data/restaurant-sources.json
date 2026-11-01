@@ -1,0 +1,21 @@
+[
+  {
+    "brand": "Greggs",
+    "file": "greggs.csv",
+    "url": "https://a.storyblok.com/f/94904/x/7dd8489dab/nutritional-information.pdf",
+    "version": "September 2026",
+    "retrievedAt": "2026-11-01",
+    "scope": "Greggs UK, September 2026 guide; regional and seasonal availability varies."
+  },
+  {
+    "brand": "PizzaExpress",
+    "aliases": [
+      "Pizza Express"
+    ],
+    "file": "pizzaexpress.csv",
+    "url": "https://content-cdn.pizzaexpress.com/files/lj3txstz/production/b72a05d52e0a11e8b6c37620bbf93cc170595598.pdf",
+    "version": "September 2026",
+    "retrievedAt": "2026-11-01",
+    "scope": "England, Wales and Scotland September 2026 guide; excludes Brixton, Finsbury Park and Earl\u2019s Court special menus. Airport breakfast entries apply only at Edinburgh and Gatwick."
+  }
+]

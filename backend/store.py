@@ -11,7 +11,7 @@ def uk_source(food):
     if food.get('recipeItems'):return all(uk_source(i['food']) for i in food['recipeItems'])
     if food.get('isAiEstimate'):return True # a labelled guess, never a database reference
     if source.startswith('UK CoFID'):return True
-    if food.get('market')=='UK' and (source.startswith('Open Food Facts') or source in {'Your product label','Your product reference','Photo nutrition label'}):return True
+    if food.get('market')=='UK' and (source.startswith('Open Food Facts') or source in {'Your product label','Your product reference','Photo nutrition label','Official UK restaurant nutrition'}):return True
     if source=='Your recipe':return bool(food.get('recipeItems')) and all(uk_source(i['food']) for i in food['recipeItems'])
     return False
 
@@ -126,6 +126,7 @@ class Store:
 
     def seed(self):
         names=['cofid-normalized.json'] if self.uk_only else ['usda-survey-normalized.json','usda-generic-normalized.json','cofid-normalized.json']
+        names.append('uk-restaurants.json')
         paths=[Path(__file__).resolve().parent.parent/'data'/name for name in names]
         for path in paths:
             if not path.exists():continue

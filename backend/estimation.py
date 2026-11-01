@@ -149,6 +149,10 @@ def batch_divisor(component):
 def component_grams(component,food):
     quantity=component.get('quantity')
     unit=component.get('unit','g').strip().lower()
+    if food.get('nutritionBasis')=='serving':
+        if unit not in {'serving','servings','portion','portions'} or isinstance(quantity,bool) or not isinstance(quantity,(int,float)) or not math.isfinite(quantity) or not 0 < quantity <= 10000:
+            raise ValueError('Enter the number of menu servings; a photo weight cannot be converted to restaurant servings.')
+        return round(quantity/batch_divisor(component),4)
     if food.get('nutritionBasis')=='ml':
         # Legacy amount field is named grams; for ml-labelled foods it holds ml.
         factors={'ml':1,'millilitre':1,'millilitres':1,'l':1000,'litre':1000,'tsp':5,'teaspoon':5,'teaspoons':5,'tbsp':15,'tablespoon':15,'tablespoons':15}
@@ -301,7 +305,7 @@ def resolve_components(components,store,known_ids=(),allow_ai=False,usual_produc
             basis={'user':'Your quantity','photo':'Photo estimate','assumed':'Assumed quantity'}.get(component.get('basis'),'Assumed quantity')
             quantity=component.get('quantity')
             unit=component.get('unit','g')
-            detail=f'{quantity:g} {unit}' if quantity is not None and component.get('basis')=='user' else f'≈ {grams:g} g'
+            detail=f'{quantity:g} {unit}' if quantity is not None and component.get('basis')=='user' else f"≈ {grams:g} {food.get('nutritionBasis','g')}"
             identified=food['name'].split('—')[0].strip() if food.get('personalReference') else component['label']
             item=item_for(food,grams,f'{basis}: {detail}',identified)
             set_portion_evidence(item,component)
