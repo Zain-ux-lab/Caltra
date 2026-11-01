@@ -17,5 +17,24 @@
     "version": "September 2026",
     "retrievedAt": "2026-11-01",
     "scope": "England, Wales and Scotland September 2026 guide; excludes Brixton, Finsbury Park and Earl\u2019s Court special menus. Airport breakfast entries apply only at Edinburgh and Gatwick."
+  },
+  {
+    "brand": "Popeyes",
+    "file": "popeyes.csv",
+    "url": "https://allergensandnutritions.popeyesuk.com/nutritional-information-table",
+    "version": "Live UK table retrieved 2026-11-01",
+    "retrievedAt": "2026-11-01",
+    "scope": "Popeyes UK live published table; availability varies."
+  },
+  {
+    "brand": "Nando's",
+    "aliases": [
+      "Nandos"
+    ],
+    "file": "nandos.csv",
+    "url": "https://www.nandos.co.uk/food/menu/",
+    "version": "Menu build 1793104315519",
+    "retrievedAt": "2026-11-01",
+    "scope": "Nando\u2019s UK general menu, excluding regional trials."
   }
 ]

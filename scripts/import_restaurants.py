@@ -31,7 +31,7 @@ def build():
                     'url': source['url'], 'retrievedAt': source['retrievedAt'],
                     'sourceVersion': source['version'], 'sourcePage': row['page'],
                     'nutrients': nutrients, 'portions': [{'label': '1 menu serving', 'grams': 1, 'unit': 'serving'}],
-                    'sourceWarning': source['scope']+' Published values are per menu serving. Choose the exact size and variant; log sides and drinks separately unless named in this item. Actual preparation may vary.',
+                    'sourceWarning': source['scope']+' '+row.get('warning','')+' Published values are per menu serving. Choose the exact size and variant; log sides and drinks separately unless named in this item. Actual preparation may vary.',
                 })
     assert len({r['id'] for r in records}) == len(records), 'Duplicate item identities'
     return records
@@ -39,5 +39,5 @@ def build():
 
 if __name__ == '__main__':
     records = build()
-    (ROOT/'data/uk-restaurants.json').write_text(json.dumps(records, ensure_ascii=False, indent=2)+'\n')
+    (ROOT/'data/uk-restaurants.json').write_text(json.dumps(records, ensure_ascii=False, separators=(',',':'))+'\n')
     print(f'Wrote {len(records)} official UK restaurant records')

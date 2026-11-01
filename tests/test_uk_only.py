@@ -7,7 +7,7 @@ def test_uk_only_catalog_never_loads_usda_and_filters_old_cache(tmp_path):
  store=Store(tmp_path/'x.sqlite',uk_only=True)
  store.cache_food({'id':'old-us','name':'Old rice','source':'USDA FoodData Central','nutrients':{'calories':100,'protein':1,'carbs':20,'fat':0}})
  store.seed()
- assert store.foods() and all(f['source'].startswith('UK CoFID') for f in store.foods())
+ assert store.foods() and all((f['source'].startswith('UK CoFID') or (f['source']=='Official UK restaurant nutrition' and f['market']=='UK')) for f in store.foods())
  assert store.food('old-us') is None
  assert store.food('168878') is None
 
@@ -18,7 +18,7 @@ def test_no_usda_network_even_with_configured_key(tmp_path,monkeypatch):
  with TestClient(create_app(tmp_path/'x.sqlite')) as client:
   r=client.get('/api/foods?q=rice')
   assert r.status_code==200
-  assert all(f['source'].startswith('UK CoFID') for f in r.json()['foods'])
+  assert all((f['source'].startswith('UK CoFID') or (f['source']=='Official UK restaurant nutrition' and f['market']=='UK')) for f in r.json()['foods'])
   assert client.get('/api/status').json()['nutritionRegion']=='UK'
 
 def test_old_us_source_cannot_be_saved_as_new_meal_or_used_in_recipe(tmp_path):

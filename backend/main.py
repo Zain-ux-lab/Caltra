@@ -39,7 +39,7 @@ def create_app(db_path=None,*,uk_only=True):
     def health():return {'status':'ok'}
 
     analysis_lock=threading.Lock()
-    analysis_version='uk-diagnostics-v24'
+    analysis_version='uk-restaurants-v25'
 
     @app.middleware('http')
     async def local_only(request:Request,call_next):

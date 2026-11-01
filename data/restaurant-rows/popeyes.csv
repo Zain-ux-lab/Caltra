@@ -1,0 +1,197 @@
+name,section,page,calories,protein,carbs,fat,saturates,sugars,fibre,salt
+10 Boneless Plain,Boneless,1356,362.1,45.39,12.24,14.45,3.06,0.68,0.85,2.21
+10 Cajun Citrus Boneless,Boneless,1360,377.08,45.76,15.2,14.64,3.09,1.38,1.35,2.84
+10 Garlic Parmesan Boneless,Boneless,1357,790.1,49.44,20.1,56.57,7.71,6.62,1.45,4.74
+10 Ghost Pepper Boneless,Boneless,1359,376.13,45.78,14.65,14.78,3.12,1.33,1.25,3.22
+10 Honey BBQ Boneless,Boneless,1460,531.1,46.39,45.44,17.55,3.36,30.68,2.75,3.17
+10 Hot Honey Boneless,Boneless,1358,548.13,45.59,57.25,14.65,3.06,41.48,1.15,3.91
+12 Boneless Plain,Boneless,1328,434.52,54.47,14.69,17.34,3.67,0.82,1.02,2.65
+12 Cajun Citrus Boneless,Boneless,1314,449.5,54.84,17.64,17.53,3.7,1.52,1.52,3.28
+12 Garlic Parmesan Boneless,Boneless,1307,948.12,59.33,24.12,67.88,9.25,7.94,1.74,5.69
+12 Ghost Pepper Boneless,Boneless,1342,448.55,54.85,17.09,17.67,3.73,1.46,1.42,3.66
+12 Honey BBQ Boneless,Boneless,1300,637.32,55.67,54.53,21.06,4.03,36.82,3.3,3.8
+12 Hot Honey Boneless,Boneless,1296,657.75,54.71,68.69,17.58,3.67,49.78,1.38,4.69
+20 Boneless Plain,Boneless,1329,724.2,90.78,24.48,28.9,6.12,1.36,1.7,4.42
+4 Boneless Plain / Kids Nuggets,Boneless,1322,144.87,18.16,4.9,5.78,1.22,0.27,0.34,0.89
+4 Cajun Citrus Boneless,Boneless,1311,152.31,18.34,6.37,5.88,1.24,0.62,0.59,1.2
+4 Garlic Parmesan Boneless,Boneless,1304,316.04,19.78,8.04,22.63,3.08,2.65,0.58,1.9
+4 Ghost Pepper Boneless,Boneless,1339,151.84,18.35,6.1,5.94,1.25,0.59,0.54,1.39
+4 Honey BBQ Boneless,Boneless,1297,212.44,18.56,18.18,7.02,1.34,12.27,1.1,1.27
+6 Boneless Plain,Boneless,1326,217.26,27.23,7.34,8.67,1.84,0.41,0.51,1.33
+6 Cajun Citrus Boneless,Boneless,1312,224.73,27.42,8.82,8.77,1.85,0.76,0.76,1.64
+6 Garlic Parmesan Boneless,Boneless,1305,474.06,29.66,12.06,33.94,4.63,3.97,0.87,2.84
+6 Ghost Pepper Boneless,Boneless,1265,224.26,27.43,8.54,8.83,1.87,0.73,0.71,1.83
+6 Honey BBQ Boneless,Boneless,1298,318.66,27.83,27.26,10.53,2.02,18.41,1.65,1.9
+8 Boneless Plain,Boneless,1327,289.68,36.31,9.79,11.56,2.45,0.54,0.68,1.77
+8 Cajun Citrus Boneless,Boneless,1313,300.14,36.57,11.86,11.69,2.47,1.03,1.03,2.21
+8 Garlic Parmesan Boneless,Boneless,1306,632.08,39.55,16.08,45.26,6.17,5.3,1.16,3.79
+8 Ghost Pepper Boneless,Boneless,1341,299.48,36.58,11.47,11.79,2.49,1,0.96,2.47
+8 Honey BBQ Boneless,Boneless,1299,424.88,37.11,36.35,14.04,2.69,24.54,2.2,2.54
+Bacon Egg and Cheese Muffin,Breakfast,434,398.77,20.63,26.63,22.91,6.77,3.09,2.14,1.86
+Bacon Roll - Plain,Breakfast,205,346.18,18.68,29.44,16.48,6.43,7.77,2.32,1.66
+Bacon Roll with Cajun Ketchup,Breakfast,202,364.88,18.78,33.3,16.77,6.45,11.16,2.46,1.83
+Bacon Roll with Heinz Ketchup,Breakfast,204,356.38,18.8,31.76,16.49,6.44,10.05,2.39,1.84
+Bacon Roll with HP Sauce,Breakfast,201,358.18,18.77,32.21,16.54,6.45,9.88,2.36,1.79
+Big Breakfast Roll with Chicken Breakfast Patty & Heinz Ketchup,Breakfast,231,403.91,23.29,35.96,18.1,7.65,10.88,2.93,2.15
+Big Breakfast Roll with Chicken Breakfast Patty & HP Sauce,Breakfast,227,405.71,23.26,36.41,18.15,7.66,10.71,2.9,2.1
+"Big Breakfast Roll with Chicken Breakfast Patty, Streaky Bacon & Heinz Ketchup",Breakfast,1422,460.19,26.87,35.97,22.67,9.36,11.09,2.93,2.63
+"Big Breakfast Roll with Chicken Breakfast Patty, Streaky Bacon & HP Sauce",Breakfast,1420,461.99,26.84,36.42,22.72,9.37,10.92,2.9,2.57
+Big Breakfast Wrap with Chicken Breakfast Patty & Heinz Ketchup,Breakfast,247,703.11,31.48,50.3,41.1,10.82,5.12,4.35,3.29
+"Big Breakfast Wrap with Chicken Breakfast Patty, Streaky Bacon & Heinz Ketchup",Breakfast,218,764.49,35.11,51.48,45.68,12.54,6.46,4.39,3.85
+"Big Breakfast Wrap with Chicken Breakfast Patty, Streaky Bacon & HP Sauce",Breakfast,216,767.19,35.07,52.15,45.76,12.55,6.21,4.34,3.77
+Big Cajun Roll with Chicken Breakfast Patty,Breakfast,1391,439.26,23.68,38.78,20.54,7.9,12.45,3.31,2.74
+Big Cajun Roll with Chicken Breakfast Patty & Streaky Bacon,Breakfast,1418,714.58,29.52,56.1,40.22,12.61,16.97,5.69,4.27
+Big Cajun Wrap with Chicken Breakfast Patty,Breakfast,249,517.2,29.89,37.68,27.28,8.14,4.67,2.17,2.46
+Big Cajun Wrap with Chicken Breakfast Patty & Streaky Bacon,Breakfast,220,786.09,35.49,55.07,46.27,12.58,8.58,4.8,4.42
+Breakfast Roll with Chicken Breakfast Patty & Cajun Ketchup,Breakfast,239,312.94,13.43,36.65,11.94,4.17,11.34,2.94,1.42
+Breakfast Roll with Chicken Breakfast Patty & Heinz Ketchup,Breakfast,240,304.44,13.45,35.11,11.66,4.16,10.23,2.87,1.43
+Breakfast Roll with Chicken Breakfast Patty & HP Sauce,Breakfast,238,306.24,13.42,35.56,11.71,4.17,10.06,2.84,1.38
+"Breakfast Roll with Chicken Breakfast Patty, Streaky Bacon & Cajun Ketchup",Breakfast,1426,387.98,18.2,36.66,18.04,6.45,11.61,2.94,2.05
+"Breakfast Roll with Chicken Breakfast Patty, Streaky Bacon & Heinz Ketchup",Breakfast,1427,379.48,18.22,35.12,17.76,6.44,10.5,2.87,2.06
+"Breakfast Roll with Chicken Breakfast Patty, Streaky Bacon & HP Sauce",Breakfast,1423,381.28,18.19,35.57,17.81,6.45,10.33,2.84,2.01
+Cajun Hash Brown,Breakfast,221,115.25,1.58,11.99,6.38,0.25,0.57,1.77,0.78
+"Chicken Breakfast Patty, Egg & Cheese Muffin",Breakfast,206,440.11,23.96,30.02,24.57,6.45,3.31,2.89,2.08
+"Double Bacon, Egg and Cheese Muffin",Breakfast,210,464.43,24.8,26.64,28.24,8.77,3.33,2.14,2.41
+"Double Chicken Breakfast Patty, Egg & Cheese Muffin",Breakfast,212,511.11,31.46,33.42,27.57,7.68,3.76,3.64,2.81
+"Double Sausage, Egg & Cheese Roll *selected restaurants only",Breakfast,1119,509.71,30.67,37.04,26.09,9.42,9.05,3.61,2.75
+"Double Sausage, Egg & Cheese Roll with Brown Sauce*selected restaurants only",Breakfast,1123,521.71,30.76,39.81,26.15,9.44,11.16,3.65,2.87
+"Double Sausage, Egg & Cheese Roll with Ketchup*selected restaurants only",Breakfast,1121,519.91,30.79,39.36,26.1,9.43,11.33,3.68,2.93
+Egg & Cheese Roll *selected restaurants only,Breakfast,963,313.71,15.67,30.24,14.09,6.3,8.15,2.11,1.23
+Egg and Cheese Muffin,Breakfast,214,333.11,16.46,26.62,17.57,4.78,2.86,2.14,1.31
+Hash Brown,Breakfast,222,106.4,1.18,10.7,6.22,0.22,0.11,1.46,0.2
+Bold BBQ,Dips,413,70.7,0.32,17.36,0.18,0.04,12.15,0.18,0.75
+Buffalo,Dips,414,8.05,0.11,0.53,0.56,0.14,0.49,0.24,2.15
+Classic Mayonnaise,Dips,418,218.75,0.49,2,23.21,1.75,1.26,0.18,0.57
+Garlic Mayo,Dips,415,218.4,0.46,1.93,23.21,1.65,0.84,0.18,0.57
+Ghost Pepper Big Dip,Dips,1403,273.6,0.8,64.48,0.48,0,31.36,0.8,5.28
+Honey BBQ Dip Pot,Dips,1440,67.55,0.42,15.01,0.73,0.03,13.16,0.24,0.49
+Hot Honey,Dips,482,67.55,0.11,16.55,0.18,0.04,14.42,0.18,0.6
+Kickback Dip Pot,Dips,891,198.45,0.49,2.52,20.69,1.54,1.89,0.18,0.56
+Louisiana Hot,Dips,416,8.05,0.18,1.54,0.18,0.04,0.28,0.18,2.19
+Mango Habanero,Dips,417,51.8,0.14,12.39,0.14,0.04,7.88,0.24,0.52
+Ranch,Dips,419,185.15,0.18,2.21,19.39,1.4,1.3,0.18,0.57
+The Big Cheese,Dips,1041,187.2,8.96,12.96,10.88,6.72,4.16,0.16,2.24
+The Big Honey BBQ Dip,Dips,1405,287.3,1.7,56.44,5.27,0.42,51,3.23,1.63
+The Big Kickback Dip,Dips,1406,808.5,2.25,13.5,82.5,6.3,7.8,0.9,2.7
+The Big Ranch Dip,Dips,1404,793.5,0.75,9.45,83.1,6,5.55,0.75,2.4
+Black Americano,Drinks,1276,0,0,0,0,0,0,0,0
+Cappuccino,Drinks,471,81.34,5.64,8.3,2.82,1.66,8.3,0,0.33
+Caramel Latte,Drinks,514,150.58,8.06,20.47,4.03,2.37,20.16,0,0.61
+Chocolate Shake,Drinks,1092,556.73,16.22,80,8.84,4.9,69.06,2.34,0.43
+Flat White,Drinks,472,54.88,3.81,5.6,1.9,1.12,5.6,0,0.22
+Jimmy's Iced Coffee,Drinks,476,97.5,5.5,12.25,2.75,1.75,12.25,0,0.43
+Kids Oasis Summer Fruits,Drinks,1459,63,0,14.35,0,0,14.35,0,0.28
+Kids Shake - Chocolate,Drinks,400,363.64,10.54,52.73,5.71,3.16,45.18,1.51,0.27
+Kids Shake - Strawberry,Drinks,401,353.11,10.33,50.48,5.48,3.05,43.96,1.18,0.22
+Kids Shake - Vanilla,Drinks,402,285.59,10.25,34.45,5.45,3.05,32.48,1.09,0.22
+Large Chocolate Shake,Drinks,1117,740.76,22.32,103.97,12.1,6.72,90.76,3.07,0.57
+Large Lotus Biscoff Shake,Drinks,819,758.44,22.99,91.01,19.86,8.75,78.5,2.64,0.69
+Large Oreo Shake,Drinks,821,841.26,23.37,118.66,16.14,7.82,99.02,3.71,0.73
+Large Strawberry Shake,Drinks,1116,726.05,21.93,101.55,11.64,6.5,88.57,2.47,0.48
+Large Vanilla Shake,Drinks,817,607.8,21.81,73.31,11.6,6.5,69.13,2.32,0.46
+Latte,Drinks,473,116.13,8.06,11.85,4.03,2.37,11.85,0,0.47
+Lemonade,Drinks,1233,138.89,0.33,35.05,0,0,32.74,0,0
+Lotus Biscoff Shake,Drinks,403,547.51,16.61,65.55,14.39,6.31,56.62,1.9,0.49
+Oasis Summer Fruits Large,Drinks,1429,112.5,0,25.62,0,0,25.62,0,0.5
+Oasis Summer Fruits Regular,Drinks,1397,84.6,0,19.27,0,0,19.27,0,0.38
+Oreo Shake,Drinks,407,697.51,17.21,106.89,11.89,5.76,86.31,3.16,0.59
+Peach Lemonade,Drinks,1234,138.92,0.33,35.06,0,0,32.74,0,0
+Red Bull Lime Berry Burst,Drinks,1432,171.78,0,41.57,0,0,41.08,0,0.26
+Red Bull Lime Berry Burst with Cold Foam,Drinks,1436,182.38,0.86,42.53,0.36,0.28,41.08,0,0.3
+Red Bull Citrus Zest,Drinks,1236,118.68,0,28.38,0,0,28.38,0,0.26
+Red Bull Zero Hot Peach,Drinks,1430,42.41,0.04,14.17,0.04,0,8.17,0.06,0.39
+Red Bull Zero Hot Peach with Cold Foam,Drinks,1434,53.01,0.9,15.13,0.4,0.28,8.17,0.06,0.43
+Red Bull Zero Strawberry Blast,Drinks,1431,58.26,0,18.35,0,0,12.7,0,0.05
+Red Bull Zero Strawberry Blast with Cold Foam,Drinks,1399,68.86,0.86,19.31,0.36,0.28,12.7,0,0.09
+Strawberry Lemonade,Drinks,1235,167.21,0.33,42.09,0,0,39.51,0,0
+Strawberry Shake,Drinks,1093,523.87,15.85,73.22,8.42,4.7,63.68,1.78,0.35
+Tea,Drinks,475,2.82,0.2,0.29,0.1,0.06,0.29,0,0.01
+Vanilla Shake,Drinks,412,439.37,15.76,52.99,8.38,4.7,49.97,1.68,0.34
+White Americano,Drinks,1275,2.82,0.2,0.29,0.1,0.06,0.29,0,0.01
+10 Hot Wings,Hot Wings,1355,924.03,95,16.61,52.8,12.4,1,2,9.44
+12 Cajun Citrus Hot Wings,Hot Wings,1317,1123.78,114.37,22.88,63.55,14.91,1.9,2.9,11.95
+12 Garlic Parmesan Hot Wings,Hot Wings,1310,1879.23,121.29,34.07,139.18,23.25,11.89,3.48,15.88
+12 Ghost Pepper Hot Wings,Hot Wings,1345,1122.83,114.39,22.33,63.69,14.94,1.85,2.8,12.33
+12 Honey BBQ Hot Wings,Hot Wings,1303,1413.03,115.8,79.69,68.94,15.42,55.2,5.82,13.06
+12 Hot Wings,Hot Wings,1330,1108.83,114,19.93,63.36,14.88,1.2,2.4,11.33
+2 Hot Wings,Hot Wings,1331,184.83,19,3.33,10.56,2.48,0.2,0.4,1.89
+20 Hot Wings,Hot Wings,1332,1848.03,190,33.21,105.6,24.8,2,4,18.88
+3 Hot Wings,Hot Wings,1333,277.23,28.5,4.99,15.84,3.72,0.3,0.6,2.83
+6 Cajun Citrus Hot Wings,Hot Wings,1315,561.91,57.19,11.44,31.78,7.46,0.95,1.45,5.98
+6 Garlic Parmesan Hot Wings,Hot Wings,1308,939.63,60.65,17.04,69.59,11.63,5.95,1.74,7.94
+6 Ghost Pepper Hot Wings,Hot Wings,1343,561.43,57.19,11.17,31.84,7.47,0.92,1.4,6.17
+6 Honey BBQ Hot Wings,Hot Wings,1301,706.53,57.9,39.85,34.47,7.71,27.6,2.91,6.53
+6 Hot Wings,Hot Wings,1334,554.43,57,9.97,31.68,7.44,0.6,1.2,5.67
+8 Cajun Citrus Hot Wings,Hot Wings,1316,749.7,76.26,15.35,42.37,9.94,1.29,1.95,7.99
+8 Garlic Parmesan Hot Wings,Hot Wings,1309,1252.83,80.86,22.72,92.78,15.5,7.93,2.32,10.59
+8 Ghost Pepper Hot Wings,Hot Wings,1344,749.03,76.27,14.97,42.47,9.96,1.25,1.88,8.26
+8 Honey BBQ Hot Wings,Hot Wings,1302,942.03,77.2,53.13,45.96,10.28,36.8,3.88,8.71
+8 Hot Wings,Hot Wings,1325,739.23,76,13.29,42.24,9.92,0.8,1.6,7.55
+Hot Honey Sandwich,Sandwiches,1489,516.68,40.61,47.8,17.43,7.64,21.05,2.88,3.37
+Chicken Sandwich Classic,Sandwiches,1396,527.79,36.63,34.96,26.25,4.92,9.14,2.72,3
+Classic Deluxe Chicken Sandwich,Sandwiches,1246,608.05,41.28,36.78,32.16,8.81,10.48,3.37,3.26
+Ghost Pepper Sandwich,Sandwiches,1224,524.57,36.71,38.36,24.18,4.77,11.31,2.96,3.67
+Ghost Pepper Superstack Sandwich,Sandwiches,1214,734.1,41.92,51.99,38.61,10.51,12.16,5.2,4.41
+Hot Honey Superstack Sandwich,Sandwiches,1335,707.64,42.18,61.24,31.49,10.32,21.95,5.12,4.18
+Kids Sandwich ketchup,Sandwiches,1270,182.72,13.78,20.97,4.07,0.67,7.24,2.55,1.33
+Kids Sandwich Mayo,Sandwiches,1269,222.02,13.77,19.2,9.25,1.06,5.22,2.49,1.29
+Kids Sandwich Plain,Sandwiches,1268,172.52,13.66,18.65,4.06,0.66,4.96,2.48,1.15
+Red Bean Creole Vegan Sandwich,Sandwiches,280,545.43,13.82,47.1,34.06,4.04,9.88,9.34,2.57
+Spicy Chicken Sandwich,Sandwiches,1244,529.47,36.66,35.24,26.19,4.92,9.62,2.95,3.53
+Spicy Deluxe Chicken Sandwich,Sandwiches,1248,609.73,41.31,37.06,32.11,8.81,10.95,3.6,3.79
+Spicy Superstack Sandwich,Sandwiches,806,780.93,40.6,53.22,44.03,11.96,9.76,4.5,4.08
+Superstack Classic Chicken Sandwich,Sandwiches,1258,788.41,42.39,48.92,45.94,11.44,10.07,5.05,4.06
+Superstack Classic Deluxe Sandwich,Sandwiches,1254,799.01,42.85,50.22,46.22,11.5,11.37,5.61,4.06
+Superstack Hot Honey Sandwich,Sandwiches,1252,707.64,42.18,61.24,31.49,10.32,21.95,5.12,4.18
+Superstack Spicy Chicken Sandwich,Sandwiches,1251,790.09,42.42,49.2,45.88,11.44,10.55,5.28,4.59
+Superstack Spicy Deluxe Sandwich,Sandwiches,1255,800.69,42.88,50.5,46.16,11.5,11.85,5.84,4.59
+The Chicken Cruncher,Sandwiches,1407,268,16.01,27.3,10.34,1.25,4.76,1.71,1.44
+The Double Stack,Sandwiches,261,876.19,64.19,51.73,45.23,12.2,9.27,3.37,5.3
+The Mini Sandwich,Sandwiches,1320,275.02,17.45,25.49,11.2,1.75,3.68,1.41,1.46
+The Spicy Double Stack,Sandwiches,265,877.87,64.22,52.01,45.17,12.2,9.75,3.6,5.84
+The Spicy Mini Sandwich,Sandwiches,1321,275.74,17.46,25.61,11.18,1.75,3.89,1.5,1.68
+Biscuit,Sides,869,216.6,5.82,22.86,10.82,5.06,1.26,2.34,1.19
+Biscuit & Gravy,Sides,953,273.56,6.83,33.74,11.86,5.67,1.47,2.77,2.97
+Biscuit & Honey,Sides,874,308.2,5.92,38.86,13.82,5.39,16.26,2.34,1.21
+Biscuit & Hot Honey,Sides,875,311.15,5.92,39.41,13.99,5.43,15.68,2.51,1.8
+Biscuit & Nutella,Sides,871,324.45,6.72,31.48,18.45,7.03,9.7,2.85,1.22
+Cajun Fries (Large),Sides,1371,427.7,7.18,50.2,20.45,3.81,1.41,6.87,3.48
+Cajun Fries (Reg),Sides,1370,336.85,5.5,39.39,16.26,3.03,0.86,5.31,2.44
+Cajun Gravy,Sides,775,56.96,1.01,10.88,1.04,0.61,0.21,0.43,1.78
+Cheesy Fries,Sides,1290,627.8,12.03,69.63,31.45,7.62,2.24,8.56,4
+Double Chocolate Cookie,Sides,1014,410.55,4.93,50.15,20.74,10.79,31.36,1.87,0.85
+Fries (Large),Sides,1287,410,6.38,47.63,20.13,3.75,0.5,6.25,2.33
+Fries (Reg),Sides,1288,328,5.1,38.1,16.1,3,0.4,5,1.86
+Fries (Small),Sides,1289,285.36,4.44,33.15,14.01,2.61,0.35,4.35,1.62
+Honey BBQ Cheesy Loaded Fries,Sides,1106,672.17,10.37,86.99,33.44,11.21,8.74,10.17,3.99
+Kids Side Salad,Sides,427,9.6,0.42,1.26,0.2,0.04,1.24,0.52,0.01
+Mac & Cheese,Sides,520,244.8,10.98,27.9,8.82,5.4,1.98,1.62,1.39
+Mash & Gravy,Sides,431,428.96,3.41,34.88,30.8,4.73,0.37,3.63,2.2
+Milk Chocolate Cookie,Sides,1013,416.5,4.93,50.15,21.5,11.47,27.37,1.36,0.85
+Smoky Beans,Sides,551,136.25,5.13,20.98,4.07,0.38,5.13,6.27,1.02
+1 Piece Signature Louisiana Chicken,Signature Louisiana Chicken,1350,236.6,35,1.26,9.94,2.52,0.14,0.7,2.18
+2 Piece Signature Louisiana Chicken,Signature Louisiana Chicken,1352,473.2,70,2.52,19.88,5.04,0.28,1.4,4.37
+3 Piece Signature Louisiana Chicken,Signature Louisiana Chicken,1353,709.8,105,3.78,29.82,7.56,0.42,2.1,6.55
+6 Piece Signature Louisiana Chicken,Signature Louisiana Chicken,1354,1419.6,210,7.56,59.64,15.12,0.84,4.2,13.1
+Classic Shatter Crunch Wrap,Signature Wraps,1410,436.28,28.09,35.08,20.18,2.57,2.14,2.61,2.54
+Classic Superstack Wrap,Signature Wraps,1437,699.3,33.97,49.29,39.95,9.11,3.33,5.08,3.6
+Spicy Shatter Crunch Wrap,Signature Wraps,1412,437.48,28.11,35.28,20.14,2.57,2.48,2.77,2.92
+Spicy Superstack Wrap,Signature Wraps,1438,700.5,33.99,49.49,39.91,9.11,3.67,5.24,3.98
+1 Classic Tender,Tenders,1336,75,11.45,1.5,2.7,0.5,0.05,0.5,0.85
+2 Classic Tenders / Kids Tenders,Tenders,1324,150,22.9,3,5.4,1,0.1,1,1.7
+3 Classic Tenders,Tenders,1337,225,34.35,4.5,8.1,1.5,0.15,1.5,2.55
+5 Classic Tenders,Tenders,1338,375,57.25,7.5,13.5,2.5,0.25,2.5,4.25
+Biscoff Whipz,Whipz,404,350.71,6.15,36.67,19.61,4.56,29.01,1.46,0.36
+Chocolate Whipz,Whipz,397,221.75,5.27,28.66,8.85,2.38,26.86,1.46,0.23
+M&Ms Whipz,Whipz,868,288.39,5.95,38.04,11.65,4.05,35.82,2.03,0.26
+Mini Whipz - Biscoff,Whipz,197,185.99,3.45,19.72,10.19,2.41,15.97,0.82,0.19
+Mini Whipz - Chocolate,Whipz,194,123.55,3.02,15.64,5.08,1.35,14.78,0.81,0.13
+Mini Whipz - M&Ms,Whipz,867,156.87,3.36,20.33,6.48,2.19,19.27,1.09,0.14
+Mini Whipz - Mud Pie,Whipz,1238,218.89,3.93,26.67,10.02,4.23,23.04,1.22,0.22
+Mini Whipz - Oreo,Whipz,198,156.87,3.37,20.4,6.48,1.73,17.38,1.02,0.18
+Mini Whipz - Strawberry,Whipz,199,124.81,2.93,16.75,4.96,1.27,14.36,0.69,0.1
+Mini Whipz - Vanilla,Whipz,196,105,2.92,11.85,4.95,1.27,11.77,0.68,0.09
+Mud Pie Whipz,Whipz,1237,374.02,6.73,47.99,15.92,6.37,41.18,2.22,0.41
+Oreo Whipz,Whipz,406,288.39,5.98,38.18,11.65,3.13,32.04,1.88,0.33
+Strawberry Whipz,Whipz,410,224.45,5.08,31.04,8.6,2.21,25.96,1.2,0.19
+Vanilla Whipz,Whipz,411,182,5.07,20.54,8.58,2.21,20.41,1.17,0.16

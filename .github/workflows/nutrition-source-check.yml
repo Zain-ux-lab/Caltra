@@ -1,28 +1,20 @@
-name: Inspect official nutrition sources
+name: Nutrition source availability
 on:
-  push:
-    branches: [codex/uk-restaurant-catalogue]
-    paths: [.github/workflows/nutrition-source-check.yml]
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  inspect:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - run: pip install requests beautifulsoup4
-      - name: Read public menu data
+      - uses: actions/checkout@v4
+      - name: Check official source links
         run: |
           python - <<'PY'
-          import requests,re
-          from bs4 import BeautifulSoup
-          r=requests.get('https://www.nandos.co.uk/food/menu/',timeout=40)
-          soup=BeautifulSoup(r.text,'html.parser')
-          links=[x.get('href') for x in soup.find_all('link',href=True) if '.js' in x.get('href')]
-          print('CHUNKS',links)
-          for link in links:
-              if 'component' not in link:continue
-              text=requests.get('https://www.nandos.co.uk'+link,timeout=40).text
-              for needle in ['Regular','Large','factsForPortionSizes']:
-                  for m in list(re.finditer(re.escape(needle),text))[:10]:
-                      print('SIZE_CONTEXT',text[max(0,m.start()-200):m.start()+250])
+          import json, urllib.request
+          for source in json.load(open('data/restaurant-sources.json')):
+              request=urllib.request.Request(source['url'],headers={'User-Agent':'Caltra nutrition source availability check'})
+              with urllib.request.urlopen(request,timeout=40) as response:
+                  assert response.status == 200
+                  print(source['brand'], response.status, source['url'])
           PY

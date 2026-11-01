@@ -59,6 +59,16 @@ class RestaurantCatalogueTests(unittest.TestCase):
         self.assertIn('separately',result['matchedQuery'])
         self.assertTrue(all('Chicken Bake' in f['name'] for f in result['foods']))
 
+    def test_popeyes_spicy_chicken_queries_and_exact_serving(self):
+        for query in ['popeyes spicy chicken', 'popeyes spicy chicken meal']:
+            result=search_foods(self.foods,query)
+            self.assertTrue(result['foods'])
+            self.assertTrue(all(f['brand']=='Popeyes' for f in result['foods']))
+            self.assertTrue(any(f['name']=='Popeyes · Spicy Chicken Sandwich · Sandwiches' for f in result['foods']))
+        food=self.find('Popeyes · Spicy Chicken Sandwich · Sandwiches')
+        self.assertEqual(calculate([{'food':food,'grams':1}])['calories'],529.47)
+        self.assertFalse(any('Ireland Only' in f['name'] for f in self.foods))
+
     def test_seed_upgrades_existing_database_without_changing_meals(self):
         with tempfile.TemporaryDirectory() as d:
             store=Store(Path(d)/'app.db')
