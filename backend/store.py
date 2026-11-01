@@ -25,6 +25,7 @@ class Store:
         self.database_url=os.getenv('CALTRA_DATABASE_URL','').strip()
         if not self.database_url:Path(path).parent.mkdir(parents=True,exist_ok=True)
         with self.connect() as db:
+            db.execute('CREATE TABLE IF NOT EXISTS diagnostics (id TEXT PRIMARY KEY, data TEXT NOT NULL)')
             db.execute('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, data TEXT NOT NULL)')
             db.execute('CREATE TABLE IF NOT EXISTS foods (id TEXT PRIMARY KEY, data TEXT NOT NULL)')
             db.execute('CREATE TABLE IF NOT EXISTS estimates (id TEXT PRIMARY KEY, data TEXT NOT NULL)')
@@ -32,6 +33,19 @@ class Store:
             db.execute('CREATE TABLE IF NOT EXISTS favorites (id TEXT PRIMARY KEY, data TEXT NOT NULL)')
             db.execute('CREATE TABLE IF NOT EXISTS analyses (id TEXT PRIMARY KEY, data TEXT NOT NULL)')
             db.execute('CREATE TABLE IF NOT EXISTS usual_products (category TEXT PRIMARY KEY, data TEXT NOT NULL)')
+
+    def save_diagnostic(self, entry):
+        with self.connect() as db:
+            db.execute('INSERT INTO diagnostics VALUES (?,?)', (entry['id'], json.dumps(entry)))
+            db.execute('DELETE FROM diagnostics WHERE rowid NOT IN (SELECT rowid FROM diagnostics ORDER BY rowid DESC LIMIT 200)')
+
+    def clear_diagnostics(self):
+        with self.connect() as db:
+            db.execute('DELETE FROM diagnostics')
+
+    def diagnostics(self):
+        with self.connect() as db:
+            return [json.loads(row[0]) for row in db.execute('SELECT data FROM diagnostics ORDER BY rowid DESC').fetchall()]
 
     def connect(self):
         if self.database_url:

@@ -13,6 +13,7 @@ SEARCH_MODIFIERS.update({'canned','tinned','drained','reheated','water','brine',
 
 
 def tokens(text):
+    text=text.replace("'",'').replace('’','')
     text=re.sub(r'\bchick[ -]?peas?\b','chickpea',text.casefold())
     text=re.sub(r'\bfat[ -]?free\b','fat free',text)
     text=re.sub(r'\btortillas?\b(?!\s+chips\b)','wrap',text)

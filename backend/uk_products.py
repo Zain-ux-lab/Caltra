@@ -52,11 +52,13 @@ def lookup_barcode(barcode):
 
 def search_products(query):
     result=search_product_page(query)
+    from .diagnostics import record
+    record('product_search',query=query,warning=result['warning'],hasMore=result['hasMore'],candidates=[{'id':f['id'],'name':f['name']} for f in result['foods']])
     return result['foods'],result['warning']
 
 
 def search_product_page(query,page=1):
-    words=re.findall(r'[a-z0-9]+',query.lower())[:16]
+    words=re.findall(r'[a-z0-9]+',query.lower().replace("'",'').replace('’',''))[:16]
     key=(' '.join(words),page)
     empty={'foods':[],'warning':None,'hasMore':False,'page':page}
     if len(key[0])<3:return empty
