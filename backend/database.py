@@ -1,7 +1,7 @@
 """Connection adapter for the app's fixed SQL statements, SQLite locally/Postgres remotely."""
 import re
 
-TABLES={'settings':'key','foods':'id','estimates':'id','meals':'id','favorites':'id','analyses':'id','usual_products':'category'}
+TABLES={'diagnostics':'id','settings':'key','foods':'id','estimates':'id','meals':'id','favorites':'id','analyses':'id','usual_products':'category'}
 
 def postgres_sql(sql):
     # The store uses fixed two-column JSON tables. Postgres needs an explicit

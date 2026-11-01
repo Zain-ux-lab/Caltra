@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, datetime, timezone
+from .diagnostics import capture, record
 import json
 import hashlib
 import threading
@@ -38,7 +39,7 @@ def create_app(db_path=None,*,uk_only=True):
     def health():return {'status':'ok'}
 
     analysis_lock=threading.Lock()
-    analysis_version='uk-reliability-review-v23'
+    analysis_version='uk-diagnostics-v24'
 
     @app.middleware('http')
     async def local_only(request:Request,call_next):
@@ -101,6 +102,9 @@ def create_app(db_path=None,*,uk_only=True):
 
     @app.get('/api/foods')
     def foods(q:str=Query(default='',max_length=100),uk:bool=False):
+        return capture(store,'food_search',{'query':q,'uk':uk},lambda:foods_impl(q,uk))
+
+    def foods_impl(q,uk):
         query=ALIASES.get(q.strip().lower(),q.strip())
         products,warning=uk_products.search_products(query) if uk and len(query)>=3 else ([],None)
         for food in products:store.cache_food(food)
@@ -112,6 +116,9 @@ def create_app(db_path=None,*,uk_only=True):
 
     @app.get('/api/products/search')
     def product_search(q:str=Query(min_length=3,max_length=100),page:int=Query(default=1,ge=1,le=100)):
+        return capture(store,'product_search',{'query':q,'page':page},lambda:product_search_impl(q,page))
+
+    def product_search_impl(q,page):
         result=uk_products.search_product_page(q.strip(),page)
         for food in result['foods']:store.cache_food(food)
         # Generic CoFID foods must not consume the branded-product result limit.
@@ -167,7 +174,7 @@ def create_app(db_path=None,*,uk_only=True):
     def save(meal:Meal):
         payload=meal.model_dump(mode='json')
         payload['items']=resolve_items(meal.items)
-        return store.save_meal(payload)
+        return capture(store,'save_meal',{'previous':next((m for m in store.meals() if m['id']==payload['id']),None),'submitted':payload},lambda:store.save_meal(payload))
 
     @app.delete('/api/meals/{ident}')
     def delete(ident:str):
@@ -177,10 +184,17 @@ def create_app(db_path=None,*,uk_only=True):
     @app.delete('/api/diary')
     def clear():
         for meal in store.meals():store.delete_meal(meal['id'])
+        store.clear_diagnostics()
         return {'ok':True}
 
     @app.get('/api/export')
-    def export():return JSONResponse({'version':1,'meals':store.meals()},headers={'Content-Disposition':'attachment; filename="caltra-diary.json"'})
+    def export(diagnostics:bool=False):
+        payload={'version':2,'exportedAt':datetime.now(timezone.utc).isoformat(),'meals':store.meals()}
+        if diagnostics:
+            payload.update(diagnostics=store.diagnostics(), analysisVersion=analysis_version,
+                model=vision.model_name(), diagnosticNotice='Recent 200 operations since diagnostics were enabled. Photos, credentials and older correction history are not included. This is a private single-user instance export.')
+        filename='caltra-diagnostics.json' if diagnostics else 'caltra-diary.json'
+        return JSONResponse(payload,headers={'Content-Disposition':f'attachment; filename="{filename}"','Cache-Control':'no-store'})
 
     class Connection(BaseModel):
         apiKey:SecretStr=Field(min_length=10,max_length=300)
@@ -234,7 +248,7 @@ def create_app(db_path=None,*,uk_only=True):
         if angle:await angle.close()
         if angle and not side:raise HTTPException(400,'Side photo is empty. Choose a valid image.')
         try:
-            result=await run_in_threadpool(analyze,data,note.strip(),side,homemade,scope!='myPlate')
+            result=await run_in_threadpool(capture,store,'photo',{'note':note.strip(),'homemade':homemade,'scope':scope,'hasSidePhoto':bool(side)},lambda:analyze(data,note.strip(),side,homemade,scope!='myPlate'))
             from .search import dish_tokens
             words=set(dish_tokens(' '.join(food['label'] for food in result['foods'])))
             favorites=store.favorites()
@@ -246,6 +260,9 @@ def create_app(db_path=None,*,uk_only=True):
 
     @app.post('/api/refine')
     def refine(body:Refine):
+        return capture(store,'correction',body.model_dump(mode='json'),lambda:refine_impl(body))
+
+    def refine_impl(body:Refine):
         current=resolve_items(body.items) if body.items else []
         usuals=store.usual_products() if usual_products.applies(body.homemade,body.observation+' '+body.message) else []
         try:
@@ -258,9 +275,12 @@ def create_app(db_path=None,*,uk_only=True):
             if not plan['replace']:
                 return {'items':None,'totals':None,'message':plan['message'],'question':plan['question'],'version':body.version}
             estimation.preserve_amounts(plan['components'],current)
+            record('correction_plan',plan=plan)
+            warnings=[]
             for component in plan['components']:
                 if component.get('brand'):
-                    products,_=uk_products.search_products(component['brand']+' '+component['query'])
+                    products,warning=uk_products.search_products(component['brand']+' '+component['query'])
+                    if warning:warnings.append(warning)
                     for product in products:store.cache_food(product)
             items,missing=estimation.resolve_components(plan['components'],store,{i['food']['id'] for i in current},allow_ai=True,usual_products=usuals) if usuals else estimation.resolve_components(plan['components'],store,{i['food']['id'] for i in current},allow_ai=True)
             items=estimation.remove_guessed_duplicates(items,current)
@@ -269,8 +289,8 @@ def create_app(db_path=None,*,uk_only=True):
             missing=list(dict.fromkeys(missing))
             if unpreserved or not items:
                 missing=list(dict.fromkeys(missing+unpreserved))
-                return {'items':None,'totals':None,'message':'Your meal is unchanged. Could not resolve: '+', '.join(missing),'question':plan['question'],'version':body.version}
-            return {'items':items,'totals':calculate(items),'missing':missing,'message':('Partial estimate. Not included yet: '+', '.join(missing)+'. ' if missing else '')+plan['message'],'question':plan['question'],'version':body.version}
+                return {'items':None,'totals':None,'message':'Your meal is unchanged. Could not resolve: '+', '.join(missing)+'. '+' '.join(dict.fromkeys(warnings)),'question':plan['question'],'version':body.version}
+            return {'items':items,'totals':calculate(items),'missing':missing,'message':('Partial estimate. Not included yet: '+', '.join(missing)+'. ' if missing else '')+plan['message']+' '+ ' '.join(dict.fromkeys(warnings)),'question':plan['question'],'version':body.version}
         except vision.VisionError as e:raise HTTPException(503,str(e))
 
     @app.get('/api/favorites')

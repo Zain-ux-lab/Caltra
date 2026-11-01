@@ -10,8 +10,14 @@ from .search import search_foods, photo_candidates, tokens
 
 
 def source_picks(entries,allow_ai):
-    try:return vision.select_sources(entries)
+    from .diagnostics import record
+    record('source_candidates',entries=entries)
+    try:
+        picks=vision.select_sources(entries)
+        record('source_selection',selected=picks)
+        return picks
     except vision.VisionError:
+        record('source_selection_failed',reason='Provider could not select sources')
         if not allow_ai:raise
         # Failed source selection is unresolved, not a reason to skip the fallback
         # or discard independently resolved products from the same meal.
@@ -244,6 +250,10 @@ def resolve_components(components,store,known_ids=(),allow_ai=False,usual_produc
         usual=find_usual(component,usual_products)
         ident=component.get('sourceId')
         reference=personal_reference(component,records)
+        plain=plain_uk_reference(component,records)
+        if plain:
+            selected[index]=plain
+            continue
         if ident and ident in known_ids and changed_ai_identity(store.food(ident),component):
             # New preparation must not inherit the old AI density. Keep its amount.
             continue
@@ -435,7 +445,7 @@ def resolve_observation(result,store,allow_ai=False,usual_products=()):
             else:missing.append(food['label'])
     for index,food in enumerate(result['foods']):
         if food.get('components') or food['matches']:continue
-        generic=generic_berry(food,store.foods())
+        generic=plain_uk_reference(food,store.foods()) or generic_berry(food,store.foods())
         if generic and food.get('estimatedGrams'):
             count=portion_divisor(food)
             item=item_for(generic,food['estimatedGrams']/count,observation_portion_label(food),food['label'])
