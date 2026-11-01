@@ -23,6 +23,16 @@ jobs:
           print('TEXT',soup.get_text(' ',strip=True))
           import re
           js=requests.get('https://allergensandnutritions.popeyesuk.com'+soup.find('script',src=True)['src'],timeout=40).text
-          for m in re.finditer(r'.{0,180}(?:https:|nutritional|supabase|fetch).{0,220}',js):
-              print('JS',m.group())
+          start=js.find('mt={auth:')
+          print('ENDPOINTS',js[start:start+9000])
+          for needle in ['NUTRITION_INFORMATION_TABLE','nutritionInformation','NutritionalInformation','NutritionInformation','.js']:
+              positions=[m.start() for m in re.finditer(re.escape(needle),js)]
+              for pos in positions[-15:]:
+                  print('CONTEXT',js[max(0,pos-250):pos+400])
+          url='https://www.nandos.co.uk/food/menu/'
+          r=requests.get(url,timeout=40)
+          print('NANDOS',r.status_code)
+          if r.ok:
+              soup=BeautifulSoup(r.text,'html.parser')
+              print('NANDOSDATA',[(s.get('src') or s.get('href')) for s in soup.find_all(['script','link']) if 'page-data' in str(s)])
           PY
