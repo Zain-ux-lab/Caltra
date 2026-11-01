@@ -15,19 +15,9 @@ jobs:
           python - <<'PY'
           import requests,re
           from bs4 import BeautifulSoup
-          import json
-          url='https://www.nandos.co.uk/food/menu/page-data/index/page-data.1793104315519.json'
-          r=requests.get(url,timeout=40)
+          r=requests.get('https://www.nandos.co.uk/food/menu/commons-be874f9a21e04dd51083.js',timeout=40)
           r.raise_for_status()
-          data=r.json()
-          print('NANDOS_KEYS',list(data))
-          def walk(x):
-              if isinstance(x,dict):
-                  if any('nutri' in k.lower() for k in x):
-                      print('NANDOS_ITEM',json.dumps(x))
-                      return
-                  for v in x.values():walk(v)
-              elif isinstance(x,list):
-                  for v in x:walk(v)
-          walk(data)
+          for needle in ['Regular','Large','factsForPortionSizes']:
+              for m in list(re.finditer(re.escape(needle),r.text))[:10]:
+                  print('NANDOS_SIZES',r.text[max(0,m.start()-150):m.start()+200])
           PY
