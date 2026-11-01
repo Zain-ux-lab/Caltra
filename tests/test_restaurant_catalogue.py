@@ -69,13 +69,22 @@ class RestaurantCatalogueTests(unittest.TestCase):
         self.assertEqual(calculate([{'food':food,'grams':1}])['calories'],529.47)
         self.assertFalse(any('Ireland Only' in f['name'] for f in self.foods))
 
+    def test_nandos_milligrams_and_portion_exclusions(self):
+        food=self.find("Nando's · 1/2 Chicken · Pe Ri Pe Ri Chicken")
+        self.assertEqual(food['nutrients']['protein'],78.7)
+        self.assertIn('Excludes chosen spice',food['sourceWarning'])
+        self.assertTrue(any('Full Platter (chicken only)' in f['name'] for f in self.foods))
+
     def test_seed_upgrades_existing_database_without_changing_meals(self):
         with tempfile.TemporaryDirectory() as d:
             store=Store(Path(d)/'app.db')
             store.seed()
             food=store.food(self.foods[0]['id'])
             self.assertIsNotNone(food)
+            retired={**food,'id':'uk-restaurant:retired'}
+            store.cache_food(retired)
             store.seed()
+            self.assertIsNone(store.food(retired['id']))
             self.assertEqual(store.food(food['id']),food)
 
 if __name__=='__main__':

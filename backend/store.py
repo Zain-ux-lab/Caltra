@@ -131,6 +131,8 @@ class Store:
         for path in paths:
             if not path.exists():continue
             with self.connect() as db:
+                if path.name=='uk-restaurants.json':
+                    db.execute('DELETE FROM foods WHERE id LIKE ?',('uk-restaurant:%',))
                 db.executemany('INSERT INTO foods VALUES (?,?) ON CONFLICT(id) DO UPDATE SET data=excluded.data',[(f['id'],json.dumps(f)) for f in json.loads(path.read_text())])
         for path in ([] if self.uk_only else (Path(__file__).resolve().parent.parent/'data').glob('usda-*-raw.json')):
             raw=json.loads(path.read_text())

@@ -18,7 +18,7 @@ from .store import Store
 from . import targets
 from .nutrients import NUTRIENTS
 from .config import env_file
-from .search import search_foods, photo_candidates
+from .search import search_foods, photo_candidates, tokens
 from .models import Meal, Chat, Recipe, Refine, Favorite
 from .nutrition import calculate, make_recipe
 from . import assistant, vision, estimation, uk_products, usual_products
@@ -107,7 +107,7 @@ def create_app(db_path=None,*,uk_only=True):
     def foods_impl(q,uk):
         query=ALIASES.get(q.strip().lower(),q.strip())
         local=search_foods(store.foods(),query)
-        restaurant_match=any(f.get('source')=='Official UK restaurant nutrition' and f.get('brand','').lower().replace(' ','') in query.lower().replace(' ','').replace("'",'').replace('’','') for f in local['foods']) and local['matchType'] in {'matched','related'}
+        restaurant_match=any(f.get('source')=='Official UK restaurant nutrition' and set(tokens(f.get('brand',''))) <= set(tokens(query)) for f in local['foods']) and local['matchType'] in {'matched','related'}
         products,warning=uk_products.search_products(query) if uk and len(query)>=3 and not restaurant_match else ([],None)
         for food in products:store.cache_food(food)
         ranked=search_foods(store.foods(),query)
