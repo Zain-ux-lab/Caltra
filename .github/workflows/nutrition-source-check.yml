@@ -15,15 +15,18 @@ jobs:
           python - <<'PY'
           import requests,re
           from bs4 import BeautifulSoup
-          for file in ['NutritionTablePage-ay53UrW5.js','NutritionalInformationTable-QKPDTYq6.js','useFetchAllergensAndProducts-KlzkzVbd.js']:
-              r=requests.get('https://allergensandnutritions.popeyesuk.com/assets/'+file,timeout=30)
+          url='https://app-allergenplatform-prod-westeurope-001.azurewebsites.net/api/recipes/get-information'
+          page=0
+          while True:
+              r=requests.get(url,params={'pagination[page]':page,'pagination[pageSize]':500,'allergens':'false','nutrition':'true'},timeout=40)
               r.raise_for_status()
-              print('PUBLIC_TABLE',file,r.text)
-          r=requests.get('https://www.nandos.co.uk/food/menu/',timeout=30)
+              data=r.json()
+              print('POPEYES_PAGE',page,'PAGES',data.get('pages'))
+              for row in data.get('data',[]): print('POPEYES_ROW',__import__('json').dumps(row))
+              page+=1
+              if page>=data.get('pages',1):break
+          r=requests.get('https://www.nandos.co.uk/food/menu/app-1793104315519.js',timeout=40)
           r.raise_for_status()
-          soup=BeautifulSoup(r.text,'html.parser')
-          print('NANDOS_TEXT',soup.get_text(' ',strip=True)[:3000])
-          print('NANDOS_SCRIPTS',[s.get('src') for s in soup.find_all('script') if s.get('src')])
           for m in re.finditer('page-data',r.text):
-              print('NANDOS_ROUTE',r.text[max(0,m.start()-100):m.start()+250])
+              print('NANDOS_ROUTE',r.text[max(0,m.start()-100):m.start()+200])
           PY
