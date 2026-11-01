@@ -1,0 +1,25 @@
+name: Inspect official nutrition sources
+on:
+  push:
+    branches: [codex/uk-restaurant-catalogue]
+    paths: [.github/workflows/nutrition-source-check.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pip install requests beautifulsoup4
+      - name: Read public official table
+        run: |
+          python - <<'PY'
+          import requests
+          from bs4 import BeautifulSoup
+          url='https://allergensandnutritions.popeyesuk.com/nutritional-information-table'
+          r=requests.get(url,timeout=40)
+          print('STATUS',r.status_code)
+          r.raise_for_status()
+          soup=BeautifulSoup(r.text,'html.parser')
+          print('TEXT',soup.get_text(' ',strip=True))
+          print('SCRIPTS',[s.get('src') for s in soup.find_all('script') if s.get('src')])
+          PY
