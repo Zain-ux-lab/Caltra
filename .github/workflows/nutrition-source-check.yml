@@ -21,5 +21,8 @@ jobs:
           r.raise_for_status()
           soup=BeautifulSoup(r.text,'html.parser')
           print('TEXT',soup.get_text(' ',strip=True))
-          print('SCRIPTS',[s.get('src') for s in soup.find_all('script') if s.get('src')])
+          import re
+          js=requests.get('https://allergensandnutritions.popeyesuk.com'+soup.find('script',src=True)['src'],timeout=40).text
+          for m in re.finditer(r'.{0,180}(?:https:|nutritional|supabase|fetch\\().{0,220}',js):
+              print('JS',m.group())
           PY
