@@ -15,18 +15,19 @@ jobs:
           python - <<'PY'
           import requests,re
           from bs4 import BeautifulSoup
-          url='https://app-allergenplatform-prod-westeurope-001.azurewebsites.net/api/recipes/get-information'
-          page=0
-          while True:
-              r=requests.get(url,params={'pagination[page]':page,'pagination[pageSize]':500,'allergens':'false','nutrition':'true'},timeout=40)
-              r.raise_for_status()
-              data=r.json()
-              print('POPEYES_PAGE',page,'PAGES',data.get('pages'))
-              for row in data.get('data',[]): print('POPEYES_ROW',__import__('json').dumps(row))
-              page+=1
-              if page>=data.get('pages',1):break
-          r=requests.get('https://www.nandos.co.uk/food/menu/app-1793104315519.js',timeout=40)
+          import json
+          url='https://www.nandos.co.uk/food/menu/page-data/index/page-data.1793104315519.json'
+          r=requests.get(url,timeout=40)
           r.raise_for_status()
-          for m in re.finditer('page-data',r.text):
-              print('NANDOS_ROUTE',r.text[max(0,m.start()-100):m.start()+200])
+          data=r.json()
+          print('NANDOS_KEYS',list(data))
+          def walk(x):
+              if isinstance(x,dict):
+                  if any('nutri' in k.lower() for k in x):
+                      print('NANDOS_ITEM',json.dumps(x))
+                      return
+                  for v in x.values():walk(v)
+              elif isinstance(x,list):
+                  for v in x:walk(v)
+          walk(data)
           PY
