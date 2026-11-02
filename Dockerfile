@@ -11,7 +11,7 @@ WORKDIR /app
 COPY requirements-app.txt ./
 RUN pip install --no-cache-dir -r requirements-app.txt
 COPY backend ./backend
-COPY data/cofid-normalized.json ./data/cofid-normalized.json
+COPY data/cofid-normalized.json data/uk-restaurants.json ./data/
 COPY --from=ui /app/dist ./dist
 ENV PORT=10000
 CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT}"]

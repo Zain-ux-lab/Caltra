@@ -1,0 +1,20 @@
+name: Nutrition source availability
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check official source links
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          for source in json.load(open('data/restaurant-sources.json')):
+              request=urllib.request.Request(source['url'],headers={'User-Agent':'Caltra nutrition source availability check'})
+              with urllib.request.urlopen(request,timeout=40) as response:
+                  assert response.status == 200
+                  print(source['brand'], response.status, source['url'])
+          PY

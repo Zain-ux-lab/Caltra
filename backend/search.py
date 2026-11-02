@@ -14,6 +14,7 @@ SEARCH_MODIFIERS.update({'canned','tinned','drained','reheated','water','brine',
 
 def tokens(text):
     text=text.replace("'",'').replace('’','')
+    text=re.sub(r'\bpizza\s+express\b','pizzaexpress',text.casefold())
     text=re.sub(r'\bchick[ -]?peas?\b','chickpea',text.casefold())
     text=re.sub(r'\bfat[ -]?free\b','fat free',text)
     text=re.sub(r'\btortillas?\b(?!\s+chips\b)','wrap',text)
@@ -36,6 +37,10 @@ def food_terms(food):
 def search_foods(foods,query,limit=40):
     words=tokens(query)
     if not words:return {'foods':foods[:limit],'matchType':'browse','matchedQuery':''}
+    restaurant_brands={token for f in foods if f.get('source')=='Official UK restaurant nutrition' for token in tokens(f.get('brand',''))}
+    restaurants=set(words)&restaurant_brands
+    if restaurants:
+        foods=[f for f in foods if restaurants<=set(tokens(f.get('brand','')))]
     retailers=set(words)&RETAILER_BRANDS.keys()
     # A named shop must not offer another shop's branded food as a substitute.
     eligible=[f for f in foods if not retailers or not f.get('brand') or retailers<=food_terms(f)]
@@ -55,6 +60,11 @@ def search_foods(foods,query,limit=40):
     if exact:
         exact.sort(key=rank)
         return {'foods':exact[:limit],'matchType':'matched','matchedQuery':' '.join(normalized)}
+    if restaurants and requested&{'meal','combo'}:
+        component_words=requested-{'meal','combo'}
+        components=[food for food,terms in indexed if component_words<=terms]
+        if components:
+            return {'foods':sorted(components,key=rank)[:limit],'matchType':'related','matchedQuery':'menu items; add your chosen sides and drink separately'}
     identity=requested-SEARCH_MODIFIERS-retailers
     # If the requested ingredient is absent, preparation words cannot replace it.
     anchor=next((word for word in reversed(normalized) if word in identity),None)

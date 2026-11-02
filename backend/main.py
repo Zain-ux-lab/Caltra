@@ -18,7 +18,7 @@ from .store import Store
 from . import targets
 from .nutrients import NUTRIENTS
 from .config import env_file
-from .search import search_foods, photo_candidates
+from .search import search_foods, photo_candidates, tokens
 from .models import Meal, Chat, Recipe, Refine, Favorite
 from .nutrition import calculate, make_recipe
 from . import assistant, vision, estimation, uk_products, usual_products
@@ -39,7 +39,7 @@ def create_app(db_path=None,*,uk_only=True):
     def health():return {'status':'ok'}
 
     analysis_lock=threading.Lock()
-    analysis_version='uk-diagnostics-v24'
+    analysis_version='uk-restaurants-v25'
 
     @app.middleware('http')
     async def local_only(request:Request,call_next):
@@ -106,7 +106,9 @@ def create_app(db_path=None,*,uk_only=True):
 
     def foods_impl(q,uk):
         query=ALIASES.get(q.strip().lower(),q.strip())
-        products,warning=uk_products.search_products(query) if uk and len(query)>=3 else ([],None)
+        local=search_foods(store.foods(),query)
+        restaurant_match=any(f.get('source')=='Official UK restaurant nutrition' and set(tokens(f.get('brand',''))) <= set(tokens(query)) for f in local['foods']) and local['matchType'] in {'matched','related'}
+        products,warning=uk_products.search_products(query) if uk and len(query)>=3 and not restaurant_match else ([],None)
         for food in products:store.cache_food(food)
         ranked=search_foods(store.foods(),query)
         if ranked['matchType']=='related':
@@ -122,7 +124,7 @@ def create_app(db_path=None,*,uk_only=True):
         result=uk_products.search_product_page(q.strip(),page)
         for food in result['foods']:store.cache_food(food)
         # Generic CoFID foods must not consume the branded-product result limit.
-        records=[f for f in store.foods() if f.get('brand') and not f.get('isAiEstimate')] if page==1 else result['foods']
+        records=[f for f in store.foods() if f.get('brand') and f.get('nutritionBasis')!='serving' and not f.get('isAiEstimate')] if page==1 else result['foods']
         ranked=search_foods(records,q.strip(),limit=100)
         return {**result,**ranked,'mode':'UK branded products'}
 
