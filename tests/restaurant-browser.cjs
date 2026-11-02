@@ -38,7 +38,7 @@ const server=spawn('python',['-m','uvicorn','backend.main:app','--host','127.0.0
   assert.match(await fibre.innerText(),/1.48/);
   await page.reload();
   await page.getByRole('button',{name:'Nutrients',exact:true}).click();
-  await fibre.waitFor();assert.match(await fibre.innerText(),/1.48/);
+  await fibre.getByText('1.48',{exact:false}).first().waitFor();assert.match(await fibre.innerText(),/1.48/);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(errors,[]);
   console.log('PASS: real catalogue search, half-serving save, fractional diary display, same-day nutrients and persistence.');
