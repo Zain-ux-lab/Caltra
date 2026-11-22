@@ -63,3 +63,17 @@ def test_named_brand_correction_looks_up_and_uses_product(tmp_path,monkeypatch):
   r=client.post('/api/refine',json={'message':'125g of Tilda Pure Basmati Rice from a250g pouch','items':[]}).json()
   assert r['items'][0]['food']['brand']=='Tilda'
   assert r['totals']['calories']==178.75
+
+
+def test_food_search_treats_a_scanned_barcode_as_a_product_lookup(tmp_path,monkeypatch):
+ looked_up=[]
+ def lookup(code):
+  looked_up.append(code)
+  return (uk_products.normalize_product(product()),None) if code=='5011157996776' else (None,'Product not found.')
+ monkeypatch.setattr(uk_products,'lookup_barcode',lookup)
+ with TestClient(create_app(tmp_path/'test.sqlite')) as client:
+  found=client.get('/api/foods?q=5011157996776&uk=true').json()
+  assert [f['id'] for f in found['foods']]==['off:5011157996776'] and found['matchType']=='matched'
+  missing=client.get('/api/foods?q=12345678&uk=true').json()
+  assert missing['foods']==[] and missing['warning']=='Product not found.'
+ assert looked_up==['5011157996776','12345678']

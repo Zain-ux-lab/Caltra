@@ -1,5 +1,8 @@
 from datetime import date, datetime, timezone
 from .diagnostics import capture, record
+from .portion_memory import apply_usual_portions
+from .hidden_extras import hidden_extras
+from .restaurant_links import chain_link
 import json
 import hashlib
 import threading
@@ -98,7 +101,7 @@ def create_app(db_path=None,*,uk_only=True):
 
     @app.get('/api/status')
     def status():
-        return {'visionConfigured':bool(os.getenv('GEMINI_API_KEY','').strip()),'visionModel':vision.model_name(),'usdaConfigured':False,'nutritionRegion':'UK' if uk_only else 'legacy test catalog','chatConfigured':bool(os.getenv('GEMINI_API_KEY')),'cachedFoods':len(store.foods()),'chatModel':os.getenv('GEMINI_MODEL',vision.DEFAULT_MODEL)}
+        return {'visionConfigured':bool(os.getenv('GEMINI_API_KEY','').strip()),'visionModel':vision.model_name(),'usdaConfigured':False,'nutritionRegion':'UK' if uk_only else 'legacy test catalog','chatConfigured':bool(os.getenv('GEMINI_API_KEY')),'cachedFoods':len(store.foods()),'chatModel':os.getenv('GEMINI_MODEL',vision.DEFAULT_MODEL),'cloud':bool(os.getenv('CALTRA_PUBLIC_ORIGIN','').strip())}
 
     @app.get('/api/foods')
     def foods(q:str=Query(default='',max_length=100),uk:bool=False):
@@ -106,6 +109,9 @@ def create_app(db_path=None,*,uk_only=True):
 
     def foods_impl(q,uk):
         query=ALIASES.get(q.strip().lower(),q.strip())
+        if query.isdigit() and 8<=len(query)<=14:
+            try:return {'foods':[barcode_product(query)],'matchType':'matched','matchedQuery':query,'mode':'UK barcode','warning':None}
+            except HTTPException as e:return {'foods':[],'matchType':'none','matchedQuery':query,'mode':'UK barcode','warning':e.detail}
         local=search_foods(store.foods(),query)
         restaurant_match=any(f.get('source')=='Official UK restaurant nutrition' and set(tokens(f.get('brand',''))) <= set(tokens(query)) for f in local['foods']) and local['matchType'] in {'matched','related'}
         products,warning=uk_products.search_products(query) if uk and len(query)>=3 and not restaurant_match else ([],None)
@@ -114,7 +120,7 @@ def create_app(db_path=None,*,uk_only=True):
         if ranked['matchType']=='related':
             fallback=f"Not an exact match for ‘{q}’. These are related {ranked['matchedQuery']} records; their nutrition may differ."
             warning=f'{warning} {fallback}' if warning else fallback
-        return {**ranked,'mode':'UK products and CoFID' if uk else 'UK CoFID and saved labels','warning':warning}
+        return {**ranked,'mode':'UK products and CoFID' if uk else 'UK CoFID and saved labels','warning':warning,'chain':chain_link(query)}
 
     @app.get('/api/products/search')
     def product_search(q:str=Query(min_length=3,max_length=100),page:int=Query(default=1,ge=1,le=100)):
@@ -152,6 +158,10 @@ def create_app(db_path=None,*,uk_only=True):
         store.cache_food(food)
         return food
 
+    @app.get('/api/hidden-extras')
+    def get_hidden_extras():
+        return hidden_extras(store.usual_products(),[f for f in store.foods() if f['source'].startswith('UK CoFID')])
+
     @app.get('/api/usual-products')
     def get_usual_products():return store.usual_products()
 
@@ -175,8 +185,12 @@ def create_app(db_path=None,*,uk_only=True):
     @app.post('/api/meals')
     def save(meal:Meal):
         payload=meal.model_dump(mode='json')
-        payload['items']=resolve_items(meal.items)
+        payload['items']=store.fill_micronutrients(resolve_items(meal.items))
         return capture(store,'save_meal',{'previous':next((m for m in store.meals() if m['id']==payload['id']),None),'submitted':payload},lambda:store.save_meal(payload))
+
+    @app.post('/api/meals/fill-vitamins')
+    def fill_vitamins():
+        return capture(store,'fill_vitamins',{},store.backfill_micronutrients)
 
     @app.delete('/api/meals/{ident}')
     def delete(ident:str):
@@ -203,6 +217,8 @@ def create_app(db_path=None,*,uk_only=True):
 
     @app.post('/api/settings/gemini')
     def connect(body:Connection):
+        # The cloud container's filesystem is wiped on restart, so a saved key would silently vanish.
+        if os.getenv('CALTRA_PUBLIC_ORIGIN','').strip():raise HTTPException(409,'Set GEMINI_API_KEY in your hosting dashboard; keys saved here would be lost on restart.')
         key=body.apiKey.get_secret_value().strip()
         if not key or any(c.isspace() for c in key):raise HTTPException(422,'Enter a valid API key.')
         env_path=ENV_PATH
@@ -251,6 +267,7 @@ def create_app(db_path=None,*,uk_only=True):
         if angle and not side:raise HTTPException(400,'Side photo is empty. Choose a valid image.')
         try:
             result=await run_in_threadpool(capture,store,'photo',{'note':note.strip(),'homemade':homemade,'scope':scope,'hasSidePhoto':bool(side)},lambda:analyze(data,note.strip(),side,homemade,scope!='myPlate'))
+            apply_usual_portions(result,store.meals())
             from .search import dish_tokens
             words=set(dish_tokens(' '.join(food['label'] for food in result['foods'])))
             favorites=store.favorites()
