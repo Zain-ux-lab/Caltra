@@ -1,0 +1,15 @@
+[
+  {"brand": "Bill's", "names": ["bills"], "url": "https://bills-website.co.uk/menus/"},
+  {"brand": "Burger King", "names": ["burger king", "bk"], "url": "https://www.burgerking.co.uk/nutritional-info"},
+  {"brand": "Costa", "names": ["costa"], "url": "https://www.costa.co.uk/sustainability/nutrition"},
+  {"brand": "Côte", "names": ["cote"], "url": "https://www.cote.co.uk/nutrition"},
+  {"brand": "Domino's", "names": ["dominos"], "url": "https://corporate.dominos.co.uk/about-us/our-food/allergens-and-nutrition"},
+  {"brand": "KFC", "names": ["kfc"], "url": "https://www.kfc.co.uk/nutrition-allergens"},
+  {"brand": "LEON", "names": ["leon"], "url": "https://leon.co/menu/"},
+  {"brand": "McDonald's", "names": ["mcdonalds", "maccies", "maccas"], "url": "https://www.mcdonalds.com/gb/en-gb/menu.html"},
+  {"brand": "Pizza Hut", "names": ["pizza hut"], "url": "https://www.pizzahut.co.uk/nutrition"},
+  {"brand": "Starbucks", "names": ["starbucks"], "url": "https://www.starbucks.co.uk/menu"},
+  {"brand": "Subway", "names": ["subway"], "url": "https://www.subway.com/en-gb/menunutrition/nutrition"},
+  {"brand": "Wagamama", "names": ["wagamama", "wagamamas"], "url": "https://www.wagamama.com/menu"},
+  {"brand": "Wetherspoon", "names": ["wetherspoon", "wetherspoons"], "url": "https://www.jdwetherspoon.com/food/menu"}
+]

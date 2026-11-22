@@ -83,6 +83,19 @@ def test_settings_saves_private_key_without_returning_it(monkeypatch,tmp_path):
         assert client.post('/api/settings/gemini',json={'apiKey':key},headers={'origin':'https://evil.example'}).status_code==403
 
 
+def test_cloud_refuses_to_save_key_to_ephemeral_disk(monkeypatch,tmp_path):
+    import base64
+    import backend.main as main
+    monkeypatch.setenv('CALTRA_PUBLIC_ORIGIN','https://caltra.example')
+    monkeypatch.setenv('CALTRA_ACCESS_PASSWORD','long-private-test-password')
+    monkeypatch.setenv('GEMINI_API_KEY','')
+    monkeypatch.setattr(main,'ENV_PATH',tmp_path/'.env')
+    auth={'authorization':'Basic '+base64.b64encode(b'caltra:long-private-test-password').decode()}
+    with TestClient(create_app(tmp_path/'test.sqlite'),base_url='https://caltra.example') as client:
+        assert client.post('/api/settings/gemini',json={'apiKey':'test-private-key-123'},headers=auth).status_code==409
+        assert not (tmp_path/'.env').exists()
+        assert client.get('/api/status',headers=auth).json()['cloud'] is True
+
 def test_descriptive_cookie_gets_generic_macros_without_animal_cookie(tmp_path,monkeypatch):
     monkeypatch.setattr(vision,'select_sources',lambda entries:{index:next(f for f in entry['candidates'] if f['name']=='Cookie, NFS') for index,entry in enumerate(entries)})
     monkeypatch.setattr(vision,'recognize',lambda data,note='':{'foods':[{'label':'Iced cookie with toppings','query':'iced cookie with toppings','estimatedGrams':120}],'description':'cookie','question':'','notice':'Estimate'})

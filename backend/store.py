@@ -11,7 +11,7 @@ def uk_source(food):
     if food.get('recipeItems'):return all(uk_source(i['food']) for i in food['recipeItems'])
     if food.get('isAiEstimate'):return True # a labelled guess, never a database reference
     if source.startswith('UK CoFID'):return True
-    if food.get('market')=='UK' and (source.startswith('Open Food Facts') or source in {'Your product label','Your product reference','Photo nutrition label','Official UK restaurant nutrition'}):return True
+    if food.get('market')=='UK' and (source.startswith('Open Food Facts') or source in {'Your product label','Your product reference','Photo nutrition label','Official UK restaurant nutrition','Your menu entry'}):return True
     if source=='Your recipe':return bool(food.get('recipeItems')) and all(uk_source(i['food']) for i in food['recipeItems'])
     return False
 
@@ -72,6 +72,32 @@ class Store:
     def cache_estimate(self,food):
         with self.connect() as db:
             db.execute('INSERT INTO estimates VALUES (?,?)',(food['id'],json.dumps(food)))
+
+    def fill_micronutrients(self,items):
+        """Add labelled generic vitamin/mineral estimates to the items' foods.
+
+        Decisions live in settings, not on the product record, because product searches re-cache records.
+        """
+        from .micronutrients import fill_missing
+        unique={item['food']['id']:item['food'] for item in items}
+        cofid=[f for f in self.foods() if f['source'].startswith('UK CoFID')]
+        decisions=self.setting('micronutrientPicks') or {}
+        if new:=fill_missing(list(unique.values()),cofid,decisions):
+            self.save_setting('micronutrientPicks',{**decisions,**new})
+        return [{**item,'food':unique[item['food']['id']]} for item in items]
+
+    def backfill_micronutrients(self):
+        """Fill missing vitamins and minerals in saved meals; logged calories and macros don't change."""
+        from .micronutrients import fill_missing, missing_keys
+        meals=self.meals()
+        before=[json.dumps(meal['items']) for meal in meals]
+        foods=[item['food'] for meal in meals for item in meal['items']]
+        decisions=self.setting('micronutrientPicks') or {}
+        if new:=fill_missing(foods,[f for f in self.foods() if f['source'].startswith('UK CoFID')],decisions):
+            self.save_setting('micronutrientPicks',{**decisions,**new})
+        changed=[meal for meal,items in zip(meals,before) if json.dumps(meal['items'])!=items]
+        for meal in changed:self.save_meal(meal)
+        return {'updatedMeals':len(changed),'undecidedFoods':len({food['id'] for food in foods if missing_keys(food)})}
 
     def food(self, ident):
         with self.connect() as db:

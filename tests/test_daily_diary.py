@@ -7,8 +7,8 @@ from backend.nutrition import nutrient_coverage, make_recipe
 def test_micronutrients_missing_are_not_zero():
  items=[{'grams':50,'food':{'nutrients':{'iron':4,'vitaminC':20}}},{'grams':100,'food':{'nutrients':{}}}]
  values=nutrient_coverage(items)
- assert values['iron']=={'value':2,'complete':False,'missing':1}
- assert values['vitaminD']=={'value':None,'complete':False,'missing':2}
+ assert values['iron']=={'value':2,'complete':False,'missing':1,'estimated':0}
+ assert values['vitaminD']=={'value':None,'complete':False,'missing':2,'estimated':0}
 
 
 def test_targets_persist_and_reject_invalid_values(tmp_path):

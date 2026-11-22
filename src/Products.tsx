@@ -1,5 +1,6 @@
 import {useEffect,useState,useRef} from 'react';
 import {api,json,Food} from './api';
+import {BarcodeScanButton} from './BarcodeScan';
 type Usual={category:string;foodId:string;food:Food};
 const categories=['yogurt','milk','protein powder','oats','honey','cooking oil','cheese','mayonnaise','rice'];
 const fields=['calories','protein','carbs','fat','fibre','sugars','saturates','salt'];
@@ -12,8 +13,8 @@ export default function Products(){
  const refresh=()=>api<Usual[]>('/usual-products').then(setUsuals);
  useEffect(()=>{refresh().catch(e=>setError(e.message))},[]);
  async function useProduct(food:Food){setBusy(true);setError('');try{await api('/usual-products',json({category,foodId:food.id}));await refresh();setNotice(`Saved your usual ${category}.`);setFoods([])}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
- async function search(more=false){
-  const term=more?resultQuery:query.trim(),next=more?page+1:1;
+ async function search(more=false,scanned?:string){
+  const term=scanned??(more?resultQuery:query.trim()),next=more?page+1:1;
   setBusy(true);setError('');setNotice('');
   if(!more){setFoods([]);setHasMore(false)}
   try{
@@ -31,6 +32,7 @@ export default function Products(){
  {error&&<p className="error" role="alert">{error}</p>}{notice&&<p className="notice" role="status">{notice}</p>}
  <label>Ingredient<select aria-label="Product ingredient" value={category} onChange={e=>setCategory(e.target.value)}>{categories.map(c=><option key={c} value={c}>{c[0].toUpperCase()+c.slice(1)}</option>)}</select></label>
  <form className="search" onSubmit={e=>{e.preventDefault();void search(false)}}><input aria-label="Search UK products or barcode" placeholder="e.g. Tesco fat free yogurt, or barcode" value={query} maxLength={100} required minLength={3} onChange={e=>setQuery(e.target.value)}/><button className="secondary" disabled={busy}>{busy?'Working…':'Search'}</button></form>
+ <BarcodeScanButton disabled={busy} onCode={code=>{setQuery(code);void search(false,code)}} onError={message=>{setNotice('');setError(message)}}/>
  <p className="muted">Tesco, Asda and other UK brands via Open Food Facts. Coverage varies; check the current label. No match? Enter it below.</p>
  <p className="muted">{foods.length>0?`${foods.length} UK products shown`:""}</p><div className="product-results">{foods.map(f=><article key={f.id} className="product-card"><b>{f.name}</b><p>{f.nutrients.calories} kcal · P {f.nutrients.protein} · C {f.nutrients.carbs} · F {f.nutrients.fat} per 100 {f.nutritionBasis||'g'}</p>{f.sourceWarning&&<p className="muted">{f.sourceWarning}</p>}<button className="secondary" disabled={busy} onClick={()=>void useProduct(f)}>Use as my {category}</button></article>)}</div>{hasMore&&<button className="secondary" disabled={busy} onClick={()=>void search(true)}>{busy?'Searching…':'Show more UK products'}</button>}
  <input ref={labelInput} type="file" className="visually-hidden" accept="image/jpeg,image/png,image/webp" aria-label="Product label photo" onChange={e=>{void readLabel(e.target.files?.[0]);e.target.value=''}}/><button className="text-button" disabled={busy} onClick={()=>labelInput.current?.click()}>Read a label photo</button><p className="muted">Label photos go to Google/Gemini for transcription. Review before saving, or enter the label yourself.</p><button className="text-button" onClick={()=>setManual(!manual)}>{manual?'Close label entry':'Enter a product label'}</button>

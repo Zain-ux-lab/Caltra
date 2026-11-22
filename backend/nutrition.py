@@ -15,8 +15,13 @@ def nutrient_coverage(items):
     result={}
     for key in EXTRA_KEYS:
         known=[i for i in items if isinstance(i['food']['nutrients'].get(key),(float,int)) and not isinstance(i['food']['nutrients'].get(key),bool) and math.isfinite(i['food']['nutrients'][key]) and i['food']['nutrients'][key]>=0]
-        result[key]={'value':round(sum(i['food']['nutrients'][key]*i['grams']/nutrition_divisor(i['food']) for i in known),8) if known else None,'complete':bool(items) and len(known)==len(items),'missing':len(items)-len(known)}
+        result[key]={'value':round(sum(i['food']['nutrients'][key]*i['grams']/nutrition_divisor(i['food']) for i in known),8) if known else None,'complete':bool(items) and len(known)==len(items),'missing':len(items)-len(known),'estimated':sum(estimated(i['food'],key) for i in known)}
     return result
+
+
+def estimated(food,key):
+    """True when this nutrient value is a generic estimate rather than the food's own record."""
+    return key in ((food.get('micronutrientEstimate') or {}).get('keys') or ())
 
 
 def normalize_food(raw):
@@ -77,7 +82,10 @@ def make_recipe(name, items, yield_grams, ident):
     result={'id':ident,'name':name,'source':'Your recipe','dataType':'Measured recipe','url':'',
             'retrievedAt':datetime.now(timezone.utc).isoformat(), 'nutrients':{k:v*100/yield_grams for k,v in totals.items()},
             'portions':[], 'recipeItems':items, 'yieldGrams':yield_grams}
-    result['nutrients'].update({k:v['value']*100/yield_grams if v['complete'] else None for k,v in nutrient_coverage(items).items()})
+    coverage=nutrient_coverage(items)
+    result['nutrients'].update({k:v['value']*100/yield_grams if v['complete'] else None for k,v in coverage.items()})
+    if keys:=[k for k,v in coverage.items() if v['complete'] and v['estimated']]:
+        result['micronutrientEstimate']={'fromId':None,'from':'generic estimates for some ingredients','keys':keys}
     if any(i['food'].get('isAiEstimate') for i in items):
         result.update(isAiEstimate=True,dataType='Recipe including AI-estimated nutrition',sourceWarning='This recipe includes AI-estimated nutrition; its totals are not fully database verified.')
     return result

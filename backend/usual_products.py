@@ -9,14 +9,15 @@ CATEGORIES={'yogurt':{'yogurt','yoghurt'},'milk':{'milk'},'protein powder':{'pro
 
 class LabelNutrients(BaseModel):
  model_config=ConfigDict(extra='forbid')
- calories:float=Field(ge=0,le=950,allow_inf_nan=False)
- protein:float=Field(ge=0,le=100,allow_inf_nan=False)
- carbs:float=Field(ge=0,le=100,allow_inf_nan=False)
- fat:float=Field(ge=0,le=100,allow_inf_nan=False)
- fibre:float|None=Field(default=None,ge=0,le=100,allow_inf_nan=False)
- sugars:float|None=Field(default=None,ge=0,le=100,allow_inf_nan=False)
- saturates:float|None=Field(default=None,ge=0,le=100,allow_inf_nan=False)
- salt:float|None=Field(default=None,ge=0,le=100,allow_inf_nan=False)
+ # Bounds fit one restaurant serving; label_food applies the tighter per-100 limits.
+ calories:float=Field(ge=0,le=5000,allow_inf_nan=False)
+ protein:float=Field(ge=0,le=500,allow_inf_nan=False)
+ carbs:float=Field(ge=0,le=500,allow_inf_nan=False)
+ fat:float=Field(ge=0,le=500,allow_inf_nan=False)
+ fibre:float|None=Field(default=None,ge=0,le=500,allow_inf_nan=False)
+ sugars:float|None=Field(default=None,ge=0,le=500,allow_inf_nan=False)
+ saturates:float|None=Field(default=None,ge=0,le=500,allow_inf_nan=False)
+ salt:float|None=Field(default=None,ge=0,le=500,allow_inf_nan=False)
 
 class LabelProduct(BaseModel):
  model_config=ConfigDict(extra='forbid')
@@ -24,7 +25,7 @@ class LabelProduct(BaseModel):
  brand:str=Field(min_length=1,max_length=80)
  retailer:str=Field(default='',max_length=80)
  barcode:str=Field(default='',max_length=14,pattern=r'^\d{0,14}$')
- nutritionBasis:Literal['g','ml']='g'
+ nutritionBasis:Literal['g','ml','serving']='g'
  nutrients:LabelNutrients
  servingAmount:float|None=Field(default=None,gt=0,le=10000,allow_inf_nan=False)
  servingLabel:str=Field(default='',max_length=60)
@@ -38,7 +39,13 @@ def label_food(body):
  n=body.nutrients.model_dump()
  if n['sugars'] is not None and n['sugars']>n['carbs']+.5:raise ValueError('Sugars cannot exceed total carbohydrate. Check the per-100 values.')
  if n['saturates'] is not None and n['saturates']>n['fat']+.5:raise ValueError('Saturates cannot exceed total fat.')
+ if body.nutritionBasis=='serving':return menu_food(body,n)
+ if n['calories']>950 or any(value is not None and value>100 for key,value in n.items() if key!='calories'):raise ValueError('Per-100 values cannot exceed 950 kcal or 100 g of a nutrient. Check you copied the per-100 column.')
  return {'id':'label:'+str(uuid.uuid4()),'name':body.brand.strip()+' · '+body.name.strip(),'brand':body.brand.strip(),'retailer':body.retailer.strip(),'barcode':body.barcode,'market':'UK','nutritionBasis':body.nutritionBasis,'source':'Your product label','dataType':'Manually entered; check against the current UK label','sourceWarning':'Values entered from your label; not independently verified. Amounts remain estimated unless measured.','url':'','retrievedAt':datetime.now(timezone.utc).isoformat(),'nutrients':n,'portions':[{'label':body.servingLabel.strip() or '1 serving','grams':body.servingAmount,'unit':body.nutritionBasis}] if body.servingAmount else []}
+
+def menu_food(body,n):
+ # Same per-serving shape as the shared restaurant catalogue, but attributed to you, not the chain.
+ return {'id':'label:'+str(uuid.uuid4()),'name':body.brand.strip()+' · '+body.name.strip(),'brand':body.brand.strip(),'retailer':'','barcode':'','market':'UK','nutritionBasis':'serving','source':'Your menu entry','dataType':'Copied by you from published restaurant nutrition','sourceWarning':"Values you copied from the restaurant's published nutrition; not checked by Caltra. Per menu serving.",'url':'','retrievedAt':datetime.now(timezone.utc).isoformat(),'nutrients':n,'portions':[{'label':'1 menu serving','grams':1,'unit':'serving'}]}
 
 def find_usual(component,usuals):
  text=(component['label']+' '+component['query']).lower().replace('yoghurt','yogurt')

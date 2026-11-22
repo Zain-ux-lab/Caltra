@@ -45,3 +45,6 @@ body{background:var(--paper)}a{color:#88432f}button,input,select,textarea{font:i
 .review-finding {padding:16px 0;border-top:1px solid var(--line)}
 .review-nutrient {display:grid;grid-template-columns:1fr auto;gap:8px;padding:14px 0;border-bottom:1px solid var(--line)}
 .review-nutrient small {grid-column:1/-1;color:var(--muted)}
+.scan-button{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:8px}
+.hidden-extras{margin-top:16px;border-top:1px solid var(--line,#e2e7de);padding-top:12px}.hidden-extras h3{font-size:15px;font-weight:600;margin:0 0 4px}.hidden-extras>p{font-size:12px;margin:0 0 10px}.extra-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0}.extra-row span{flex:0 0 96px;font-size:13px}.extra-row button{width:auto;padding:7px 12px;font-size:12px}
+.find-yourself{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}.find-yourself h3{font-size:16px;margin:0 0 4px}.find-links{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:12px 0 4px}.find-links a.secondary{text-decoration:none;color:var(--ink)}.find-yourself .label-form{margin-top:12px}

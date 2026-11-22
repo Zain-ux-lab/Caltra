@@ -1,4 +1,4 @@
-"""Canonical units for daily nutrient tracking; no inferred product micronutrients."""
+"""Canonical units for daily nutrient tracking. Inferred values are labelled (see micronutrients.py)."""
 NUTRIENTS=[
  ('fibre','Fibre','g','Other nutrients'),('sugars','Total sugars','g','Other nutrients'),('saturates','Saturated fat','g','Other nutrients'),('salt','Salt','g','Other nutrients'),
  ('vitaminA','Vitamin A (retinol equivalents)','µg','Vitamins'),('vitaminC','Vitamin C','mg','Vitamins'),('vitaminD','Vitamin D','µg','Vitamins'),('vitaminE','Vitamin E','mg','Vitamins'),('vitaminK1','Vitamin K1','µg','Vitamins'),('thiamin','B1 · Thiamin','mg','Vitamins'),('riboflavin','B2 · Riboflavin','mg','Vitamins'),('niacin','B3 · Niacin equivalents','mg','Vitamins'),('pantothenate','B5 · Pantothenate','mg','Vitamins'),('vitaminB6','Vitamin B6','mg','Vitamins'),('biotin','B7 · Biotin','µg','Vitamins'),('folate','B9 · Folate','µg','Vitamins'),('vitaminB12','Vitamin B12','µg','Vitamins'),

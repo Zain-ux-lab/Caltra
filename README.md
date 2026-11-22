@@ -4,7 +4,7 @@
 
 Caltra is an early-stage nutrition tracker: photograph a meal, add what the camera cannot see, review the estimated foods and portions, and log them to your daily diary. It combines Gemini image analysis with UK food records, saved product labels and deterministic nutrient calculations.
 
-This repository runs locally. A hosted service and native mobile app are not available yet.
+It runs locally on your own machine, or as a private single-user deployment behind a password (see [docs/FREE_CLOUD_SETUP.md](docs/FREE_CLOUD_SETUP.md)). It isn't a public multi-user service, and there's no native mobile app.
 
 ## Why I built it and what I contributed
 
@@ -17,21 +17,25 @@ this is project experience, not a claim that I wrote every line unaided.
 
 The key decision is to keep food identification separate from nutrient
 arithmetic: the app matches a reviewed food to a source record, then calculates
-nutrients from the reviewed amount. Missing nutrient data stays unknown.
+nutrients from the reviewed amount. Missing nutrient data stays unknown unless
+a labelled generic estimate is available (see below).
 See [estimation](backend/estimation.py), [photo analysis](backend/vision.py)
 and the [tests](tests/) for the implementation. Portion accuracy remains an
-open problem, so this is a working local prototype rather than a validated
+open problem, so this is a working prototype rather than a validated
 nutrition tool.
 
 ## What it does
 
 - **Photo + context:** upload a photo and optionally describe hidden ingredients. Caltra inventories the pictured meal automatically, including possible shared foods with estimated amounts. A side photo and product-default controls are optional. Review, halve or remove foods afterward; different foods on the same plate remain separate entries when identified.
-- **Manual food logging:** search UK foods or products without a photo, select a supplied serving or enter grams/ml, preview macros and add multiple foods to a meal.
+- **Manual food logging:** search UK foods or products, or scan a barcode, without a photo; select a supplied serving or enter grams/ml, preview macros and add multiple foods to a meal.
 - **Editable food breakdown:** review each food, portion, source and macro estimate; halve one food or the whole meal, answer optional follow-up questions and undo AI corrections.
-- **UK food lookup:** UK CoFID generic foods and UK-market Open Food Facts product records, with barcode lookup and manual label entry.
+- **Hidden extras:** one tap adds cooking oil, butter, milk, sugar or honey in spoon or splash measures, using your usual product for that ingredient if you've saved one.
+- **Your usual portions:** once you've entered your own amount for a food at least twice, later photo estimates for that food start from the median of your last five amounts. Accepting that suggestion doesn't count as a new entry, so it can't reinforce itself.
+- **UK food lookup:** UK CoFID generic foods, UK-market Open Food Facts product records and 2,185 restaurant records with official per-serving nutrition from nine UK chains (Greggs, PizzaExpress, Popeyes, Nando's, KFC, McDonald's, Pret, Subway and Caffè Nero; see [the catalogue notes](docs/RESTAURANT-CATALOGUE.md)), with barcode scanning (photo of the barcode) and manual label entry.
+- **Restaurants Caltra doesn't hold:** when a search finds no exact match, a "Not on Caltra?" panel links to the chain's official nutrition page (13 UK chains, checked by hand) and a Google search, then lets you enter one menu serving yourself. Your entry is saved, so the same search finds it next time.
 - **Your usual products:** save specific products for compatible ingredients in homemade meals.
 - **Daily diary:** calories, protein, carbohydrate and fat remaining against your saved targets; foods grouped by breakfast, lunch, dinner and snacks for a selected date.
-- **Nutrient details:** fibre, vitamins and minerals where source data is available. Missing values are unknown; partial totals are marked.
+- **Nutrient details:** fibre, vitamins and minerals where source data is available. When a product record has no vitamin or mineral values, Caltra fills them from the closest generic UK CoFID food and marks them as estimates. Anything still missing is shown as unknown, and partial totals are marked.
 - **Target setup:** a local starting-target calculator, optional Gemini explanation, and editable targets that require your review before saving.
 - **Remembered meals:** reuse a saved meal without another image-analysis request.
 
@@ -100,14 +104,22 @@ These browser scripts currently expect Google Chrome at its standard macOS insta
 
 ## Privacy and deployment
 
-- Meals, remembered meals, usual products and successful structured analysis results are stored in the local SQLite database. Successful photo analyses are cached using a fingerprint; original image bytes are not stored in that cache.
-- Uploaded images and requested AI context are sent to Google. UK branded-food searches send search terms to Open Food Facts. Check provider terms before submitting sensitive content.
-- Keys are stored in a local `.env` file or an existing private `~/.config/caltra/.env`; neither belongs in Git. Food images, databases, evaluation outputs and downloaded weights are excluded from this repository.
-- The server is restricted to localhost. This prototype has no public-service account isolation, authentication or multi-user deployment setup. Do not expose it as a shared hosted service without adding those controls.
+Caltra has two modes, chosen by environment variables in [backend/access.py](backend/access.py) and [backend/store.py](backend/store.py):
+
+- **Local (default):** the server only answers requests to `localhost`. Meals, remembered meals, usual products and cached analysis results go in a SQLite file in the project folder. The Gemini key lives in `.env` or `~/.config/caltra/.env`.
+- **Private cloud beta:** set `CALTRA_PUBLIC_ORIGIN`, `CALTRA_ACCESS_PASSWORD` and `CALTRA_DATABASE_URL`. Every request except the health check and app icons needs the shared password (HTTP Basic auth), writes from other origins are rejected, and data goes in PostgreSQL. Set `GEMINI_API_KEY` in the hosting dashboard. The Settings key form is hidden in this mode and the API refuses to save keys, because the container's filesystem doesn't survive a restart.
+
+In both modes:
+
+- It's one diary for one person. There are no user accounts and no per-user data isolation, so don't share the password. Separate accounts are needed before more than one person can use it.
+- Photo analyses are cached by fingerprint. The original image bytes aren't stored.
+- Uploaded images and requested AI context go to Google. UK branded-food searches send search terms to Open Food Facts. Saving a meal can send product names to Google so it can pick a generic food for missing vitamins. The restaurant and Google links only open in your own browser when you tap them; Caltra itself sends nothing to those sites. The barcode reader's WebAssembly file is downloaded from the jsDelivr CDN on your first scan; the photo itself stays in your browser. Check provider terms before submitting anything sensitive.
+- Corrections update the saved meal and show up in diagnostic exports. They don't train or change the model.
+- Keys, food images, databases, evaluation outputs and downloaded weights are kept out of Git.
 
 ## Technology
 
-React 19 · TypeScript · Vite · FastAPI · Pydantic · SQLite · Gemini API
+React 19 · TypeScript · Vite · FastAPI · Pydantic · SQLite / PostgreSQL · Gemini API
 
 Portion-estimation research code is retained under `experiments/`; its downloaded datasets, weights and results are excluded. Those experiments are not a trained production model used by the current photo flow.
 
@@ -124,6 +136,6 @@ Third-party data and dependencies retain their own terms. No blanket open-source
 
 The Nutrients tab includes 3-day and 7-day reviews ending on the selected diary date. Optionally mark days as finished logging. A recurring low-intake flag needs at least three complete days with full data coverage for that nutrient; missing dates and missing nutrient values never count as zero. Initial food suggestions use general adult NHS references for fibre, calcium and vitamin C. Other nutrients show recorded averages where available, without personalised deficiency claims. This is an in-app review, not a background notification service or clinical assessment.
 
-Foods with macro-only AI estimates remain unknown for vitamins and minerals. Exact plain UK ingredient aliases can use CoFID references when source selection finds no match; product labels and composite recipes are not silently replaced with generic ingredients. Historical meal snapshots are preserved.
+Vitamins and minerals missing from a product label or AI estimate are filled when you save the meal. CoFID search makes a shortlist of generic foods, Gemini picks the closest one or none (protein powders and soft drinks usually get none), and the values are copied from that CoFID record. Gemini never writes nutrient values itself. Each filled value is marked in the diary with the CoFID food it came from, and the dietary review says when its averages include estimates. The choice is remembered per product, so each product is only asked about once. Label values are never overwritten, per-serving records are skipped, and without a Gemini key values stay unknown. For meals logged before estimates existed, **Settings → Fill missing vitamins** fills the same gaps across your diary in one go. Logged calories and macros aren't touched. Exact plain UK ingredient aliases can use CoFID references when source selection finds no match; product labels and composite recipes are not silently replaced with generic ingredients. Historical meal snapshots are preserved.
 
 Photo analysis makes no automatic retry. Incomplete provider replies, timeouts and service failures have separate messages; descriptive metadata is bounded without relaxing nutrition or quantity validation. Corrections that change an AI-estimated food's identity or preparation no longer reuse its old calorie density. Portion accuracy remains limited by image evidence.
