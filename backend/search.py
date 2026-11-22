@@ -37,8 +37,9 @@ def food_terms(food):
 def search_foods(foods,query,limit=40):
     words=tokens(query)
     if not words:return {'foods':foods[:limit],'matchType':'browse','matchedQuery':''}
-    restaurant_brands={token for f in foods if f.get('source')=='Official UK restaurant nutrition' for token in tokens(f.get('brand',''))}
-    restaurants=set(words)&restaurant_brands
+    # A chain counts as named only when all its words are present, so "burger" alone never means Burger King.
+    brands={frozenset(tokens(f.get('brand',''))) for f in foods if f.get('source')=='Official UK restaurant nutrition'}
+    restaurants=set().union(*(brand for brand in brands if brand and brand<=set(words)))
     if restaurants:
         foods=[f for f in foods if restaurants<=set(tokens(f.get('brand','')))]
     retailers=set(words)&RETAILER_BRANDS.keys()
@@ -71,7 +72,10 @@ def search_foods(foods,query,limit=40):
     if not anchor:return {'foods':[],'matchType':'none','matchedQuery':query}
     # Keep animal identity when a requested cut/preparation is unavailable.
     species=identity&{'chicken','turkey','lamb','beef','pork','salmon','tuna','cod','haddock'}
-    related=[(food,len(terms&requested)) for food,terms in indexed if anchor in terms and species<=terms]
+    # An unnamed chain's own name is not food: "cavolo nero" must not relate to Caffè Nero's menu.
+    def food_only(food,terms):
+        return terms-set(tokens(food['brand'])) if not restaurants and food.get('source')=='Official UK restaurant nutrition' else terms
+    related=[(food,len(terms&requested)) for food,terms in indexed if anchor in food_only(food,terms) and species<=terms]
     if not related:return {'foods':[],'matchType':'none','matchedQuery':query}
     related.sort(key=lambda pair:(-pair[1],rank(pair[0])))
     return {'foods':[food for food,_ in related[:limit]],'matchType':'related','matchedQuery':anchor}

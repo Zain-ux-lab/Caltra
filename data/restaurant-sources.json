@@ -36,5 +36,56 @@
     "version": "Menu build 1793104315519",
     "retrievedAt": "2026-11-01",
     "scope": "Nando\u2019s UK general menu, excluding regional trials."
+  },
+  {
+    "brand": "KFC",
+    "file": "kfc.csv",
+    "url": "https://www.kfc.co.uk/nutrition-allergens",
+    "version": "Live UK table retrieved 2026-11-21",
+    "retrievedAt": "2026-11-21",
+    "scope": "KFC Great Britain published table; Republic of Ireland and Northern Ireland-only rows excluded. KFC does not publish fibre. Availability varies."
+  },
+  {
+    "brand": "McDonald's",
+    "aliases": [
+      "McDonalds",
+      "Maccies",
+      "Maccas"
+    ],
+    "file": "mcdonalds.csv",
+    "url": "https://www.mcdonalds.com/gb/en-gb/menu.html",
+    "version": "Live UK menu retrieved 2026-11-21",
+    "retrievedAt": "2026-11-21",
+    "scope": "McDonald\u2019s UK menu pages and their published per-portion nutrition; hidden items and two Cappuccino rows with an implausible published salt value excluded. Availability varies by restaurant."
+  },
+  {
+    "brand": "Pret",
+    "aliases": [
+      "Pret A Manger"
+    ],
+    "file": "pret.csv",
+    "url": "https://www.pret.co.uk/en-GB/our-menu",
+    "version": "Live UK menu retrieved 2026-11-21",
+    "retrievedAt": "2026-11-21",
+    "scope": "Pret UK online menu, per-serving values; coffee and tea use the default published recipe only. Shop ranges vary."
+  },
+  {
+    "brand": "Subway",
+    "file": "subway.csv",
+    "url": "https://media.subway.com/dam/urn:aaid:aem:a554a040-1443-4a66-a671-7537cc9c29f4/original/as/UKIBuildsandIngredientsNutritionalInformationNovember2026AD.pdf",
+    "version": "November 2026",
+    "retrievedAt": "2026-11-21",
+    "scope": "Subway UK and Republic of Ireland November 2026 guide; Ireland-only cheese and three rows with contradictory published values excluded."
+  },
+  {
+    "brand": "Caff\u00e8 Nero",
+    "aliases": [
+      "Caffe Nero"
+    ],
+    "file": "caffenero.csv",
+    "url": "https://www.caffenero.com/uk/menu/coffee",
+    "version": "Live UK menu retrieved 2026-11-21",
+    "retrievedAt": "2026-11-21",
+    "scope": "Caff\u00e8 Nero UK online menu product pages, one row per published milk and size option; Northern Ireland-only products excluded. Store ranges vary."
   }
 ]
