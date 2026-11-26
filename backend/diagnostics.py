@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import uuid
 import logging
 from copy import deepcopy
+from .vision import VisionError
 
 _current = ContextVar('caltra_trace', default=None)
 
@@ -23,6 +24,9 @@ def capture(store, kind, inputs, operation):
         return result
     except Exception as exc:
         entry['errorType'] = type(exc).__name__
+        # Caltra writes every VisionError message itself; other errors may carry provider data.
+        if isinstance(exc, VisionError):
+            entry['errorMessage'] = str(exc)
         raise
     finally:
         _current.reset(token)

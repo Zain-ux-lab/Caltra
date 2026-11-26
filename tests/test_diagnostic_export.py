@@ -61,6 +61,9 @@ class DiagnosticsTests(unittest.TestCase):
             diagnostics.capture(self.store,'failure',{},lambda:(_ for _ in ()).throw(ValueError('private provider response')))
         self.assertEqual(self.store.diagnostics()[0]['errorType'],'ValueError')
         self.assertNotIn('private provider response',str(self.store.diagnostics()))
+        with self.assertRaises(vision.VisionError):
+            diagnostics.capture(self.store,'photo',{},lambda:(_ for _ in ()).throw(vision.VisionError('Gemini quota reached.')))
+        self.assertEqual(self.store.diagnostics()[0]['errorMessage'],'Gemini quota reached.')
 
     def test_trace_failure_does_not_fail_save(self):
         with patch.object(self.store,'save_diagnostic',side_effect=RuntimeError('disk unavailable')):
