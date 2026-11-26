@@ -55,3 +55,14 @@ def test_photo_route_starts_from_your_usual_portion(tmp_path,monkeypatch):
         item=client.post('/api/recognize',files={'file':('rice.jpg',photo.getvalue(),'image/jpeg')}).json()['items'][0]
     assert item['food']['id']==rice_id and item['grams']==190
     assert item['portionLabel']=='Your usual portion (190 g)'
+
+
+def test_size_picker_steps_do_not_count_as_your_amount(tmp_path):
+    from fastapi.testclient import TestClient
+    from backend.main import create_app
+    picked=[{'date':f'2026-11-0{day}','items':[{'food':RICE,'grams':225,'estimateGrams':300,'quantityBasis':'photo','portionLabel':'Smaller than estimated (¾)'}]} for day in (1,2)]
+    assert usual_portions(picked)=={}  # a step from a guess is still a guess
+    with TestClient(create_app(tmp_path/'test.sqlite')) as client:
+        rice=next(f for f in client.get('/api/foods?q=basmati rice').json()['foods'] if f['id']=='cofid:11-858')
+        saved=client.post('/api/meals',json={'id':'m','name':'Rice','date':'2026-11-03','items':[{'id':'r','food':rice,'grams':225,'estimateGrams':300,'quantityBasis':'photo'}]})
+    assert saved.status_code==200 and saved.json()['items'][0]['estimateGrams']==300

@@ -19,4 +19,9 @@ def test_usual_product_wins_and_ml_labels_keep_ml():
 
 def test_endpoint_lists_every_extra_from_the_real_catalogue(tmp_path):
     with TestClient(create_app(tmp_path/'test.sqlite')) as client:
-        assert [e['key'] for e in client.get('/api/hidden-extras').json()]==['oil','butter','milk','sugar','honey']
+        extras=client.get('/api/hidden-extras').json()
+    from backend.hidden_extras import EXTRAS
+    assert [e['key'] for e in extras]==[key for _,key,*_ in EXTRAS]  # every CoFID fallback name resolves
+    assert {e['group'] for e in extras}=={'Cooking fat','Milk and sweeteners','Sauces and dressings','Cheese and cream'}
+    cheese=next(e for e in extras if e['key']=='cheese')
+    assert cheese['options']==[{'label':'15 g','amount':15},{'label':'30 g','amount':30}]  # grams, never converted

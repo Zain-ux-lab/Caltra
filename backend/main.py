@@ -2,6 +2,7 @@ from datetime import date, datetime, timezone
 from .diagnostics import capture, record
 from .portion_memory import apply_usual_portions
 from .hidden_extras import hidden_extras
+from .cooking import cooking_variants
 from .restaurant_links import chain_link
 import json
 import hashlib
@@ -22,7 +23,7 @@ from . import targets
 from .nutrients import NUTRIENTS
 from .config import env_file
 from .search import search_foods, photo_candidates, tokens
-from .models import Meal, Chat, Recipe, Refine, Favorite
+from .models import Meal, Chat, Recipe, Refine, Favorite, CookingVariantsRequest
 from .nutrition import calculate, make_recipe
 from . import assistant, vision, estimation, uk_products, usual_products
 from pydantic import BaseModel, Field, SecretStr
@@ -161,6 +162,12 @@ def create_app(db_path=None,*,uk_only=True):
     @app.get('/api/hidden-extras')
     def get_hidden_extras():
         return hidden_extras(store.usual_products(),[f for f in store.foods() if f['source'].startswith('UK CoFID')])
+
+    @app.post('/api/cooking-variants')
+    def get_cooking_variants(body:CookingVariantsRequest):
+        cofid=[f for f in store.foods() if f['source'].startswith('UK CoFID')]
+        by_id={f['id']:f for f in cofid}
+        return {ident:cooking_variants(by_id[ident],cofid) if ident in by_id else [] for ident in body.ids}
 
     @app.get('/api/usual-products')
     def get_usual_products():return store.usual_products()
