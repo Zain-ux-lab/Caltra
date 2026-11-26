@@ -10,6 +10,8 @@ class Item(BaseModel):
     clarification:str=Field(default='',max_length=300)
     food: dict
     grams: float = Field(gt=0,le=100000,allow_inf_nan=False)
+    # The photo or assumed amount the size picker steps from; absent until you use it.
+    estimateGrams: float|None = Field(default=None,gt=0,le=100000,allow_inf_nan=False)
     quantityKind: Literal['measured','estimated'] = 'estimated'
     quantityBasis: Literal['photo','user','assumed'] = 'assumed'
     portionEvidence:str=Field(default='',max_length=400)
@@ -54,3 +56,8 @@ class Favorite(BaseModel):
     items:list[Item]=Field(min_length=1,max_length=40)
     observation:str=Field(default='',max_length=2000)
     id:str|None=Field(default=None,max_length=100)
+
+
+class CookingVariantsRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    ids:list[str]=Field(max_length=40)
